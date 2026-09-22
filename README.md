@@ -18,8 +18,7 @@ Then open http://localhost:5173.
 
 ## Before going live
 
-- Replace the placeholders: `[Clinic phone number]`, `[Opening hours]`, `[Address]`, `[Phone]`, `[Email]`, `[Hours]` and `[Dr. First Last]`.
-- Point the hero "Call" button at `tel:+961…`.
+- Replace the placeholders: `[Opening hours]`, `[Address]`, `[Email]`, `[Hours]` and `[Dr. First Last]`.
 - The booking and contact forms only work in the browser for now. Connect them to a form backend (e.g. Formspree) or an email service to receive submissions.
 
 Photos are loaded from [Unsplash](https://unsplash.com) under the Unsplash License.
