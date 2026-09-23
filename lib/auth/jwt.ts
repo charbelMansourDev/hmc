@@ -1,5 +1,8 @@
 // Edge-safe (imported by middleware): jose only. No server-only, mongoose or bcrypt here.
-import { SignJWT, jwtVerify } from "jose";
+// Import the JWT subpaths, not the "jose" barrel: the barrel drags in the JWE
+// decrypt path (DecompressionStream), which the Edge Runtime flags as unsupported.
+import { SignJWT } from "jose/jwt/sign";
+import { jwtVerify } from "jose/jwt/verify";
 
 // Rule 4: the token is scoped to its audience. Any future audience (e.g.
 // "staff") must get its own cookie name and `aud`, so one token type can
