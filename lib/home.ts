@@ -1,49 +1,29 @@
 import "server-only";
-import { seedClinics, seedDoctors, seedServices, seedSettings } from "@/scripts/seed-data";
+import { cache } from "react";
+import { Clinic } from "@/models/Clinic";
+import { Doctor } from "@/models/Doctor";
+import { Service } from "@/models/Service";
+import { SiteSettings, SETTINGS_SINGLETON } from "@/models/SiteSettings";
+import { connectDB } from "./db";
+import { toClinicDTO, toDoctorDTO, toServiceDTO, toSettingsDTO } from "./dto";
 import { buildHomeContent } from "./home-content";
+import { SETTINGS_DEFAULTS } from "./settings";
 import type { HomeContent } from "./types";
 
-// Phase 2: the visual port renders the seed content directly (ids = slugs).
-// Phase 3 replaces this with the MongoDB-backed data layer.
-export async function getHomeContent(): Promise<HomeContent> {
+/** Everything the public page renders, read live from MongoDB on each request. */
+export const getHomeContent = cache(async (): Promise<HomeContent> => {
+  await connectDB();
+  const [services, clinics, doctors, settings] = await Promise.all([
+    Service.find().lean(),
+    Clinic.find().lean(),
+    Doctor.find().lean(),
+    SiteSettings.findOne({ singleton: SETTINGS_SINGLETON }).lean(),
+  ]);
+
   return buildHomeContent({
-    services: seedServices.map((s) => ({
-      id: s.slug,
-      slug: s.slug,
-      category: s.category,
-      display: s.display,
-      name: s.name,
-      bookingLabel: s.bookingLabel,
-      chip: s.chip,
-      description: s.description,
-      tags: s.tags,
-      image: { ...s.image, storage: "external" },
-      bookAsId: s.bookAs,
-      sortOrder: s.sortOrder,
-      updatedAt: null,
-    })),
-    clinics: seedClinics.map((c) => ({
-      id: c.slug,
-      slug: c.slug,
-      name: c.name,
-      chip: c.chip,
-      description: c.description,
-      image: { ...c.image, storage: "external" },
-      serviceId: c.service,
-      sortOrder: c.sortOrder,
-      updatedAt: null,
-    })),
-    doctors: seedDoctors.map((d) => ({
-      id: d.slug,
-      slug: d.slug,
-      name: d.name,
-      specialty: d.specialty,
-      bio: d.bio,
-      photo: null,
-      accent: d.accent,
-      sortOrder: d.sortOrder,
-      updatedAt: null,
-    })),
-    settings: { ...seedSettings, updatedAt: null },
+    services: services.map(toServiceDTO),
+    clinics: clinics.map(toClinicDTO),
+    doctors: doctors.map(toDoctorDTO),
+    settings: settings ? toSettingsDTO(settings) : { ...SETTINGS_DEFAULTS, updatedAt: null },
   });
-}
+});

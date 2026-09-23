@@ -1,0 +1,20 @@
+/* CMS styles: Tailwind utilities on the shared brand tokens. */
+@import "tailwindcss";
+@import "../theme.css";
+
+@source not "../../legacy";
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
