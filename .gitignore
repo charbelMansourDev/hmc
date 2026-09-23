@@ -1,2 +1,19 @@
 .DS_Store
 .claude/
+
+# dependencies / build output
+/node_modules
+/.next
+/out
+*.tsbuildinfo
+next-env.d.ts
+
+# env files (secrets)
+.env
+.env*.local
+
+# runtime uploads (local storage backend)
+/uploads
+
+# vercel
+/.vercel

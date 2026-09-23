@@ -1,0 +1,41 @@
+{
+  "name": "hajj-medical-center",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "seed": "tsx scripts/seed.ts"
+  },
+  "dependencies": {
+    "@vercel/blob": "2.8.0",
+    "bcryptjs": "3.0.3",
+    "jose": "6.2.12",
+    "mongoose": "8.24.4",
+    "next": "15.5.25",
+    "nodemailer": "10.0.10",
+    "react": "19.1.9",
+    "react-dom": "19.1.9",
+    "server-only": "0.0.1",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "3.3.7",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "22.20.4",
+    "@types/react": "19.1.17",
+    "@types/react-dom": "19.1.11",
+    "dotenv": "18.0.3",
+    "eslint": "9.39.5",
+    "eslint-config-next": "15.5.25",
+    "tailwindcss": "4.3.3",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}

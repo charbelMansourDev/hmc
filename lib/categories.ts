@@ -1,0 +1,76 @@
+// Shared constants (safe for server, client and the seed script).
+
+export const CATEGORIES = ["specialists", "nutrition", "dental", "esthetics", "movement"] as const;
+export type Category = (typeof CATEGORIES)[number];
+
+export const SERVICE_DISPLAYS = ["card", "feature"] as const;
+export type ServiceDisplay = (typeof SERVICE_DISPLAYS)[number];
+
+export const ACCENTS = ["teal", "green", "coral", "blue"] as const;
+export type Accent = (typeof ACCENTS)[number];
+
+export const APPOINTMENT_STATUSES = ["new", "contacted", "closed"] as const;
+export type AppointmentStatus = (typeof APPOINTMENT_STATUSES)[number];
+
+export type CategoryMeta = {
+  /** Section heading on the public page */
+  heading: string;
+  /** Optional subtitle under the heading */
+  lede?: string;
+  /** Section id and nav anchor */
+  anchor: string;
+  /** Label in the header/footer nav */
+  navLabel: string;
+  /** <optgroup> label in the booking dropdown */
+  optgroup: string;
+  /** Cards span the full width on phones (Movement, like Dedicated clinics) */
+  wide?: boolean;
+};
+
+export const CATEGORY_META: Record<Category, CategoryMeta> = {
+  specialists: {
+    heading: "Our specialists",
+    anchor: "specialists",
+    navLabel: "Specialists",
+    optgroup: "Specialists",
+  },
+  nutrition: {
+    heading: "Nutrition, built around you",
+    lede: "Personalized medical nutrition therapy with our dietitians.",
+    anchor: "nutrition",
+    navLabel: "Nutrition",
+    optgroup: "Nutrition",
+  },
+  dental: {
+    heading: "Dental care, done gently",
+    anchor: "dental",
+    navLabel: "Dental",
+    optgroup: "Dental",
+  },
+  esthetics: {
+    heading: "Esthetic & slimming clinic",
+    anchor: "esthetics",
+    navLabel: "Esthetics",
+    optgroup: "Esthetics & slimming",
+  },
+  movement: {
+    heading: "Move, recover, get stronger",
+    anchor: "movement",
+    navLabel: "Movement",
+    optgroup: "Movement",
+    wide: true,
+  },
+};
+
+export const ACCENT_LABELS: Record<Accent, string> = {
+  teal: "Teal",
+  green: "Green",
+  coral: "Coral",
+  blue: "Blue",
+};
+
+/** Booking window offered on the public form (today + next 13 days). */
+export const BOOKING_DAYS = 14;
+
+/** Appointment requests are deleted automatically after this many days. */
+export const APPOINTMENT_RETENTION_DAYS = 90;

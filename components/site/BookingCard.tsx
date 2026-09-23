@@ -1,0 +1,98 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { flash, useBooking } from "./BookingProvider";
+
+// Step 1 of the booking flow: pick a service and a preferred date, then hand
+// off to the "Visit us" form, which collects name and phone and submits.
+export function BookingCard() {
+  const booking = useBooking();
+  const [note, setNote] = useState("");
+
+  // Clear the hand-off note once a request has been sent (selection reset).
+  const cleared = !booking.serviceId && !booking.date;
+  useEffect(() => {
+    if (cleared) setNote("");
+  }, [cleared]);
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const missing = [
+      ...(booking.serviceId ? [] : (["service"] as const)),
+      ...(booking.date ? [] : (["date"] as const)),
+    ];
+    if (missing.length > 0) {
+      booking.setErrors([...missing]);
+      document.getElementById(missing[0])?.focus();
+      return;
+    }
+
+    const service = booking.serviceLabel(booking.serviceId);
+    const day = booking.dayLabel(booking.date);
+    setNote(`Great — ${service} on ${day}. Add your name and phone below and our team will confirm.`);
+
+    setTimeout(() => {
+      booking.contactRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      booking.nameRef.current?.focus({ preventScroll: true });
+      flash(booking.contactRef.current);
+    }, 900);
+  };
+
+  const errorClass = (field: "service" | "date") => (booking.errors.has(field) ? " is-error" : "");
+
+  return (
+    <form className="booking" id="book" noValidate ref={booking.bookingRef} onSubmit={onSubmit}>
+      <h2>Book a visit</h2>
+      <div className="field">
+        <label htmlFor="service">Service</label>
+        <select
+          className={"select" + errorClass("service")}
+          id="service"
+          name="service"
+          required
+          value={booking.serviceId}
+          onChange={(e) => booking.setServiceId(e.target.value)}
+        >
+          <option value="" disabled>
+            Choose a service
+          </option>
+          {booking.groups.map((group) => (
+            <optgroup key={group.label} label={group.label}>
+              {group.options.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.label}
+                </option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
+      </div>
+      <div className="field">
+        <label htmlFor="date">Date</label>
+        <select
+          className={"select" + errorClass("date")}
+          id="date"
+          name="date"
+          required
+          value={booking.date}
+          onChange={(e) => booking.setDate(e.target.value)}
+        >
+          <option value="" disabled>
+            Pick a date
+          </option>
+          {booking.days.map((day) => (
+            <option key={day.value} value={day.value}>
+              {day.label}
+            </option>
+          ))}
+        </select>
+      </div>
+      <button className="btn btn-primary btn-block" type="submit">
+        Continue
+      </button>
+      <p className={note ? "form-success is-visible" : "form-success"} role="status" aria-live="polite">
+        {note}
+      </p>
+    </form>
+  );
+}
