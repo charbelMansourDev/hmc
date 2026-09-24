@@ -11,6 +11,7 @@ import {
 } from "@/components/site/Sections";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { SmoothScroll } from "@/components/site/SmoothScroll";
 import { getHomeContent } from "@/lib/home";
 
 // Content is edited in the CMS: render on every request, never at build time.
@@ -38,6 +39,7 @@ export default async function HomePage() {
         <SiteFooter nav={content.nav} settings={content.settings} />
       </BookingProvider>
       <RevealObserver />
+      <SmoothScroll />
     </>
   );
 }
