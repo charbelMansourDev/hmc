@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { NavLink } from "@/lib/types";
 import { BrandMark } from "./icons";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function SiteHeader({ nav }: { nav: NavLink[] }) {
   const [open, setOpen] = useState(false);
@@ -55,6 +56,8 @@ export function SiteHeader({ nav }: { nav: NavLink[] }) {
           <a className="btn btn-primary btn-sm nav-cta" href="#book">
             Book an appointment
           </a>
+
+          <ThemeToggle className="theme-toggle" />
 
           <button
             className="nav-toggle"

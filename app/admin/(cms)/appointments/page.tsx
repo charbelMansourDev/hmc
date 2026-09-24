@@ -51,7 +51,7 @@ export default async function AppointmentsPage({
               href={href(t.key)}
               aria-current={active ? "page" : undefined}
               className={`rounded-pill border px-4 py-1.5 text-sm font-medium ${
-                active ? "border-teal bg-teal text-white" : "border-line bg-white text-ink-2 hover:bg-bg-soft"
+                active ? "border-teal bg-teal text-white" : "border-line bg-surface text-ink-2 hover:bg-bg-soft"
               }`}
             >
               {t.label} <span className={active ? "text-white/80" : "text-muted"}>{t.count}</span>

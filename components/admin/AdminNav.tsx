@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const LINKS = [
   { href: "/admin", label: "Dashboard", exact: true },
@@ -33,7 +34,7 @@ export function AdminNav({ username, newCount }: { username: string | null; newC
             href={link.href}
             aria-current={active ? "page" : undefined}
             className={`flex items-center justify-between rounded-sm px-3 py-2 text-sm font-medium transition ${
-              active ? "bg-teal text-white shadow-sm" : "text-ink-2 hover:bg-white"
+              active ? "bg-teal text-white shadow-sm" : "text-ink-2 hover:bg-surface"
             }`}
           >
             {link.label}
@@ -51,15 +52,16 @@ export function AdminNav({ username, newCount }: { username: string | null; newC
       })}
 
       <div className="mt-auto grid gap-1 border-t border-line pt-4">
+        <ThemeToggle className="grid size-9 place-items-center rounded-sm text-ink-2 transition hover:bg-surface" />
         {/* Plain <a>: a full page load, so CMS styles never carry over into the site. */}
-        <a href="/" target="_blank" rel="noreferrer" className="rounded-sm px-3 py-2 text-sm text-ink-2 hover:bg-white">
+        <a href="/" target="_blank" rel="noreferrer" className="rounded-sm px-3 py-2 text-sm text-ink-2 hover:bg-surface">
           View website ↗
         </a>
         <button
           type="button"
           onClick={logout}
           disabled={busy}
-          className="rounded-sm px-3 py-2 text-left text-sm text-ink-2 hover:bg-white disabled:opacity-60"
+          className="rounded-sm px-3 py-2 text-left text-sm text-ink-2 hover:bg-surface disabled:opacity-60"
         >
           {busy ? "Signing out…" : "Sign out"}
         </button>

@@ -27,7 +27,7 @@ export default async function TeamPage() {
       {doctors.length === 0 ? (
         <EmptyState>No team members yet, so the section is hidden on the website.</EmptyState>
       ) : (
-        <ul className="divide-y divide-line overflow-hidden rounded-lg border border-white bg-white/90 shadow-md">
+        <ul className="divide-y divide-line overflow-hidden rounded-lg border border-white dark:border-white/10 bg-surface/90 shadow-md">
           {doctors.map((d) => (
             <li key={d.id}>
               <Link href={`/admin/team/${d.id}`} className="flex items-center gap-4 px-4 py-3 hover:bg-bg-soft">

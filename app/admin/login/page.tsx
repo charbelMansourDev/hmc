@@ -13,7 +13,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 
   return (
     <main className="grid min-h-dvh place-items-center px-4 py-10">
-      <div className="w-full max-w-sm rounded-lg border border-white bg-white/90 p-8 shadow-lg">
+      <div className="w-full max-w-sm rounded-lg border border-white dark:border-white/10 bg-surface/90 p-8 shadow-lg">
         <div className="mb-6 flex items-center gap-3">
           <span
             className="grid size-10 place-items-center rounded-[11px] text-white shadow-md"

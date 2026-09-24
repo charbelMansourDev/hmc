@@ -912,3 +912,101 @@ textarea.input { height: auto; min-height: 48px; padding: 13px 16px; resize: ver
   height: 100%;
   object-fit: cover;
 }
+
+/* ------------------------------------------------------------------------
+   Theme toggle (nav) + dark-mode overrides for the hardcoded light colours
+   above. Base tokens flip in ../theme.css; these cover gradients, glass and
+   tints that carry literal values. Selectors are prefixed with
+   :root[data-theme="dark"] so they outrank the light defaults.
+   ------------------------------------------------------------------------ */
+.theme-toggle {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-ink-2);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.theme-toggle:hover { background: var(--color-teal-soft); color: var(--color-teal); }
+
+:root[data-theme="dark"] .page-glow {
+  background:
+    radial-gradient(720px 520px at -4% 22%, rgba(23, 160, 145, 0.12), transparent 65%),
+    radial-gradient(760px 520px at 104% 4%, rgba(59, 130, 214, 0.14), transparent 62%),
+    linear-gradient(180deg, rgba(28, 42, 56, 0.55) 0%, rgba(13, 21, 29, 0) 100%);
+}
+
+:root[data-theme="dark"] .nav {
+  background: rgba(22, 33, 44, 0.72);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+:root[data-theme="dark"] .nav-open .nav-links {
+  background: rgba(22, 33, 44, 0.97);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+:root[data-theme="dark"] .btn-light:hover { background: #1f2c38; }
+
+:root[data-theme="dark"] .booking {
+  background: linear-gradient(180deg, rgba(27, 39, 50, 0.92), rgba(20, 30, 40, 0.92));
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+:root[data-theme="dark"] .input,
+:root[data-theme="dark"] .select {
+  background: #131c25;
+  border-color: rgba(255, 255, 255, 0.09);
+}
+:root[data-theme="dark"] .input:focus,
+:root[data-theme="dark"] .select:focus { background-color: #17222e; }
+:root[data-theme="dark"] .input::placeholder { color: #6d7b88; }
+:root[data-theme="dark"] .select:invalid,
+:root[data-theme="dark"] .select.is-placeholder { color: #6d7b88; }
+
+:root[data-theme="dark"] .form-success { color: #8fe0d6; }
+
+:root[data-theme="dark"] .highlight {
+  background: rgba(27, 39, 50, 0.7);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+:root[data-theme="dark"] .card { border-color: rgba(255, 255, 255, 0.06); }
+:root[data-theme="dark"] .card-media,
+:root[data-theme="dark"] .feature-media { background: #1b2732; }
+:root[data-theme="dark"] .card-media::after {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 38%);
+}
+:root[data-theme="dark"] .chip {
+  background: rgba(22, 33, 44, 0.82);
+  color: var(--color-ink);
+}
+
+:root[data-theme="dark"] .feature,
+:root[data-theme="dark"] .step,
+:root[data-theme="dark"] .member,
+:root[data-theme="dark"] .why,
+:root[data-theme="dark"] .panel {
+  background: linear-gradient(180deg, #1b2732 0%, #16212c 100%);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+:root[data-theme="dark"] .tags li { background: #22303c; }
+
+:root[data-theme="dark"] .map { background: #1b2732; }
+:root[data-theme="dark"] .map iframe { filter: saturate(0.8) brightness(0.85); }
+
+:root[data-theme="dark"] .footer-card {
+  background: rgba(24, 35, 46, 0.9);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+/* Role labels: brighten for contrast on the dark surface. */
+:root[data-theme="dark"] .role--teal { color: #35c8b3; }
+:root[data-theme="dark"] .role--green { color: #74cf63; }
+:root[data-theme="dark"] .role--coral { color: #ff7d63; }
+:root[data-theme="dark"] .role--blue { color: #6aa6f0; }

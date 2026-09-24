@@ -4,6 +4,11 @@
 
 @source not "../../legacy";
 
+/* Dark mode is attribute-driven (data-theme on <html>), matching the public
+   site. Most CMS colours are token utilities that flip via theme.css; this
+   variant covers the few literal ones (e.g. white glass borders). */
+@custom-variant dark ([data-theme="dark"] &);
+
 body {
   background: var(--color-bg);
   color: var(--color-ink);

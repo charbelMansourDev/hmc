@@ -38,7 +38,7 @@ export function AppointmentsTable({ items }: { items: AppointmentDTO[] }) {
   if (items.length === 0) return <EmptyState>No appointment requests here yet.</EmptyState>;
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-white bg-white/90 shadow-md">
+    <div className="overflow-x-auto rounded-lg border border-white dark:border-white/10 bg-surface/90 shadow-md">
       <table className="w-full min-w-[760px] text-left text-sm">
         <thead className="border-b border-line text-xs uppercase tracking-wide text-muted">
           <tr>

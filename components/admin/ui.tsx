@@ -1,7 +1,7 @@
 // Small presentational building blocks for the CMS (Tailwind utilities on brand tokens).
 
 export const inputClass =
-  "block w-full rounded-sm border border-line bg-white px-3.5 py-2.5 text-sm text-ink shadow-sm " +
+  "block w-full rounded-sm border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-sm " +
   "placeholder:text-muted/60 focus:border-teal focus:outline-none focus:ring-4 focus:ring-teal/15 " +
   "aria-[invalid=true]:border-danger aria-[invalid=true]:ring-4 aria-[invalid=true]:ring-danger/10";
 
@@ -10,10 +10,10 @@ export const buttonClass = {
     "inline-flex items-center justify-center gap-2 rounded-pill bg-teal px-5 py-2.5 text-sm font-semibold text-white " +
     "shadow-sm transition hover:bg-teal-hover disabled:cursor-progress disabled:opacity-60",
   secondary:
-    "inline-flex items-center justify-center gap-2 rounded-pill border border-line bg-white px-5 py-2.5 text-sm " +
+    "inline-flex items-center justify-center gap-2 rounded-pill border border-line bg-surface px-5 py-2.5 text-sm " +
     "font-semibold text-ink-2 shadow-sm transition hover:bg-bg-soft disabled:opacity-60",
   danger:
-    "inline-flex items-center justify-center gap-2 rounded-pill border border-danger/30 bg-white px-5 py-2.5 " +
+    "inline-flex items-center justify-center gap-2 rounded-pill border border-danger/30 bg-surface px-5 py-2.5 " +
     "text-sm font-semibold text-danger transition hover:bg-danger-soft disabled:opacity-60",
 };
 
@@ -38,7 +38,7 @@ export function PageHeader({
 }
 
 export function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-lg border border-white bg-white/90 p-6 shadow-md ${className}`}>{children}</div>;
+  return <div className={`rounded-lg border border-white dark:border-white/10 bg-surface/90 p-6 shadow-md ${className}`}>{children}</div>;
 }
 
 export function Field({
@@ -85,5 +85,5 @@ export function Notice({ tone, children }: { tone: "error" | "success" | "info";
 }
 
 export function EmptyState({ children }: { children: React.ReactNode }) {
-  return <p className="rounded-md border border-dashed border-line bg-white/60 px-6 py-10 text-center text-sm text-muted">{children}</p>;
+  return <p className="rounded-md border border-dashed border-line bg-surface/60 px-6 py-10 text-center text-sm text-muted">{children}</p>;
 }
