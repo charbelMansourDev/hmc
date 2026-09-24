@@ -19,6 +19,7 @@
     "bcryptjs": "3.0.3",
     "jose": "6.2.12",
     "mongoose": "8.24.4",
+    "motion": "13.4.3",
     "next": "15.5.25",
     "nodemailer": "10.0.10",
     "react": "19.1.9",

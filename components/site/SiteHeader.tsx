@@ -1,13 +1,47 @@
 "use client";
 
+import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import type { NavLink } from "@/lib/types";
 import { BrandMark } from "./icons";
-import { ThemeToggle } from "@/components/ThemeToggle";
+
+const PILL_SPRING = { type: "spring", stiffness: 380, damping: 32 } as const;
+
+/** The nav section currently under the reading line (40–45% down the viewport), if any. */
+function useActiveSection(nav: NavLink[]): string | null {
+  const [active, setActive] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!("IntersectionObserver" in window)) return;
+    const ids = nav.map((link) => link.href.replace(/^#/, ""));
+    const visible = new Set<string>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        }
+        setActive(ids.find((id) => visible.has(id)) ?? null);
+      },
+      { rootMargin: "-40% 0px -55% 0px" },
+    );
+    for (const id of ids) {
+      const el = document.getElementById(id);
+      if (el) io.observe(el);
+    }
+    return () => io.disconnect();
+  }, [nav]);
+
+  return active;
+}
+
+const at = (i: number) => ({ "--i": i }) as React.CSSProperties;
 
 export function SiteHeader({ nav }: { nav: NavLink[] }) {
   const [open, setOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const active = useActiveSection(nav);
 
   useEffect(() => {
     if (!open) return;
@@ -39,14 +73,24 @@ export function SiteHeader({ nav }: { nav: NavLink[] }) {
           </a>
 
           <ul className="nav-links" id="nav-links">
-            {nav.map((link) => (
-              <li key={link.href}>
-                <a href={link.href} onClick={close}>
-                  {link.label}
-                </a>
-              </li>
-            ))}
-            <li className="nav-links-cta">
+            {nav.map((link, i) => {
+              const isActive = active === link.href.slice(1);
+              return (
+                <li key={link.href} style={at(i)}>
+                  <a
+                    href={link.href}
+                    onClick={close}
+                    className={isActive ? "is-active" : undefined}
+                    aria-current={isActive ? "true" : undefined}
+                  >
+                    {/* One shared pill that glides to whichever section you're reading. */}
+                    {isActive ? <motion.span layoutId="nav-pill" className="nav-pill" transition={PILL_SPRING} /> : null}
+                    {link.label}
+                  </a>
+                </li>
+              );
+            })}
+            <li className="nav-links-cta" style={at(nav.length)}>
               <a className="btn btn-primary btn-block" href="#book" onClick={close}>
                 Book an appointment
               </a>

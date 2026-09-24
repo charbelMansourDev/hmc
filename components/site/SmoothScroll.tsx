@@ -1,14 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
+import { smoothScrollTo } from "./scroll";
 
-// Progressive enhancement: smooth-scroll in-page anchor clicks in every browser.
-// CSS `scroll-behavior: smooth` is set on <html>, but some browsers (notably
-// Safari) ignore it for anchor navigation, so we drive the scroll ourselves.
-// We honour `prefers-reduced-motion`, and `scrollIntoView` still respects the
-// `scroll-margin-top` offsets that keep targets clear of the sticky header.
-// Other document-level listeners (e.g. the booking preselect) are untouched:
-// preventDefault only cancels the native jump, not other handlers.
+// Smooth, Motion-driven scrolling for every in-page link: nav, "Book" buttons,
+// cards and footer. The URL is left untouched on purpose (no #hash is added);
+// shared links such as /#team still work natively on page load.
 export function SmoothScroll() {
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
@@ -21,22 +18,18 @@ export function SmoothScroll() {
       if (!hash || hash === "#") return;
 
       const id = decodeURIComponent(hash.slice(1));
-      const target = id === "top" ? document.documentElement : document.getElementById(id);
+      const target = id === "top" ? "top" : document.getElementById(id);
       if (!target) return;
 
       e.preventDefault();
-      const behavior: ScrollBehavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "auto"
-        : "smooth";
+      smoothScrollTo(target);
 
-      if (id === "top") {
-        window.scrollTo({ top: 0, behavior });
-      } else {
-        target.scrollIntoView({ behavior, block: "start" });
+      // Keyboard activation (detail 0): move focus along with the scroll, so the
+      // next Tab continues from the section rather than from the nav.
+      if (e.detail === 0 && target !== "top") {
+        if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+        target.focus({ preventScroll: true });
       }
-
-      // Mirror native anchor behaviour: reflect the section in the URL.
-      history.pushState(null, "", hash);
     };
 
     document.addEventListener("click", onClick);

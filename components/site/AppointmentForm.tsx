@@ -1,7 +1,10 @@
 "use client";
 
+import { motion } from "motion/react";
 import { useState } from "react";
 import { flash, useBooking, type BookingField } from "./BookingProvider";
+import { fadeUp } from "./motion/variants";
+import { smoothScrollTo } from "./scroll";
 
 type ApiError = { error?: { code?: string; message?: string; fields?: Record<string, string> } };
 
@@ -44,8 +47,9 @@ export function AppointmentForm() {
     if (missingBooking.length > 0) {
       booking.setErrors(missingBooking);
       setError("Please choose a service and a preferred date in the booking card first.");
-      booking.bookingRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-      flash(booking.bookingRef.current);
+      const card = booking.bookingRef.current;
+      if (card) smoothScrollTo(card, "center");
+      flash(card);
       return;
     }
     if (missingFields.length > 0) {
@@ -96,7 +100,15 @@ export function AppointmentForm() {
   const inputClass = (field: "name" | "phone") => "input" + (fieldErrors.has(field) ? " is-error" : "");
 
   return (
-    <form className="panel reveal" id="contact-form" noValidate ref={booking.contactRef} onSubmit={onSubmit}>
+    // Reveals with the "Visit us" block (it inherits hidden/show from the parent).
+    <motion.form
+      className="panel"
+      id="contact-form"
+      noValidate
+      ref={booking.contactRef}
+      onSubmit={onSubmit}
+      variants={fadeUp}
+    >
       <div className="field">
         <label htmlFor="name">Name</label>
         <input
@@ -156,6 +168,6 @@ export function AppointmentForm() {
       <p className={error ? "form-error is-visible" : "form-error"} role="alert">
         {error}
       </p>
-    </form>
+    </motion.form>
   );
 }

@@ -1,5 +1,8 @@
+import * as motion from "motion/react-client";
 import type { PublicClinicItem, PublicServiceItem } from "@/lib/types";
 import { CmsImage } from "./CmsImage";
+import { zoom } from "./motion/variants";
+import { TiltCard } from "./TiltCard";
 
 const CARD_SIZES = "(max-width: 640px) 50vw, (max-width: 820px) 33vw, (max-width: 1180px) 25vw, 220px";
 const WIDE_CARD_SIZES = "(max-width: 640px) 100vw, (max-width: 820px) 33vw, (max-width: 1180px) 25vw, 220px";
@@ -9,24 +12,28 @@ type CardItem = Pick<PublicServiceItem, "id" | "name" | "chip" | "description" |
 
 export function ServiceCard({ item, wide = false }: { item: CardItem; wide?: boolean }) {
   return (
-    <a className="card reveal" href="#book" data-service={item.bookingId || undefined}>
+    <TiltCard className="card" href="#book" service={item.bookingId || undefined}>
       <div className="card-media">
-        <CmsImage image={item.image} width={560} height={385} sizes={wide ? WIDE_CARD_SIZES : CARD_SIZES} />
+        <motion.div className="media-zoom" variants={zoom}>
+          <CmsImage image={item.image} width={560} height={385} sizes={wide ? WIDE_CARD_SIZES : CARD_SIZES} />
+        </motion.div>
         {item.chip ? <span className="chip">{item.chip}</span> : null}
       </div>
       <div className="card-body">
         <h3>{item.name}</h3>
         {item.description ? <p>{item.description}</p> : null}
       </div>
-    </a>
+    </TiltCard>
   );
 }
 
 export function FeatureCard({ item }: { item: PublicServiceItem }) {
   return (
-    <article className="feature reveal">
+    <TiltCard as="article" className="feature" tilt={2.5}>
       <div className="feature-media">
-        <CmsImage image={item.image} width={1400} height={620} sizes={FEATURE_SIZES} />
+        <motion.div className="media-zoom" variants={zoom}>
+          <CmsImage image={item.image} width={1400} height={620} sizes={FEATURE_SIZES} />
+        </motion.div>
       </div>
       <div className="feature-body">
         <h3>{item.name}</h3>
@@ -42,7 +49,7 @@ export function FeatureCard({ item }: { item: PublicServiceItem }) {
           Learn more
         </a>
       </div>
-    </article>
+    </TiltCard>
   );
 }
 

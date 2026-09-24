@@ -69,21 +69,6 @@ export function MailIcon(props: { "aria-hidden"?: boolean }) {
   );
 }
 
-export function CheckIcon() {
-  return (
-    <svg viewBox="0 0 16 16">
-      <path
-        d="M3.5 8.5 6.5 11.5 12.5 4.5"
-        fill="none"
-        stroke="#fff"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 export function PersonSilhouette() {
   return (
     <svg viewBox="0 0 64 64">

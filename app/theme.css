@@ -59,3 +59,18 @@
   --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.3), 0 14px 34px -16px rgba(0, 0, 0, 0.6);
   --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.35), 0 24px 48px -20px rgba(0, 0, 0, 0.7);
 }
+
+/* Theme toggle icons (public nav + CMS sidebar). Both icons are stacked in the
+   button's grid; the inactive one spins away. CSS transitions don't run on the
+   first style computation, so the correct icon shows from first paint. */
+.theme-icon {
+  grid-area: 1 / 1;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+}
+.theme-icon--sun { opacity: 0; transform: rotate(-90deg) scale(0.4); }
+:root[data-theme="dark"] .theme-icon--sun { opacity: 1; transform: none; }
+:root[data-theme="dark"] .theme-icon--moon { opacity: 0; transform: rotate(90deg) scale(0.4); }
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-icon { transition: none; }
+}

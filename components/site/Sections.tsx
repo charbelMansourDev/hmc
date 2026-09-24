@@ -1,16 +1,24 @@
+import * as motion from "motion/react-client";
+import Image from "next/image";
 import { telHref } from "@/lib/home-content";
 import type { DoctorDTO, HomeSection, PublicClinicItem, SettingsDTO } from "@/lib/types";
 import { AppointmentForm } from "./AppointmentForm";
 import { ClinicCard, FeatureCard, ServiceCard } from "./Cards";
-import { CheckIcon, ClockIcon, MailIcon, PersonSilhouette, PhoneIcon, PinIcon } from "./icons";
-import Image from "next/image";
+import { ClockIcon, MailIcon, PersonSilhouette, PhoneIcon, PinIcon } from "./icons";
+import { cascade, draw, fadeUp, pop, slideIn, VIEWPORT } from "./motion/variants";
+
+// Every block reveals once as it scrolls into view (initial="hidden" ->
+// whileInView="show"); children inherit the labels and stagger in.
+const reveal = { initial: "hidden", whileInView: "show", viewport: VIEWPORT } as const;
+
+const LIFT = { y: -6, transition: { type: "spring", stiffness: 320, damping: 22 } } as const;
 
 function SectionHead({ heading, lede }: { heading: string; lede?: string | null }) {
   return (
-    <div className="section-head reveal">
-      <h2>{heading}</h2>
-      {lede ? <p>{lede}</p> : null}
-    </div>
+    <motion.div className="section-head" {...reveal} variants={cascade(0.1)}>
+      <motion.h2 variants={fadeUp}>{heading}</motion.h2>
+      {lede ? <motion.p variants={fadeUp}>{lede}</motion.p> : null}
+    </motion.div>
   );
 }
 
@@ -20,18 +28,18 @@ export function ServiceSection({ section }: { section: HomeSection }) {
       <div className="container">
         <SectionHead heading={section.heading} lede={section.lede} />
         {section.cards.length > 0 ? (
-          <div className={section.wide ? "grid grid--wide" : "grid"}>
+          <motion.div className={section.wide ? "grid grid--wide" : "grid"} {...reveal} variants={cascade(0.055)}>
             {section.cards.map((item) => (
               <ServiceCard key={item.id} item={item} wide={section.wide} />
             ))}
-          </div>
+          </motion.div>
         ) : null}
         {section.features.length > 0 ? (
-          <div className="features">
+          <motion.div className="features" {...reveal} variants={cascade(0.12)}>
             {section.features.map((item) => (
               <FeatureCard key={item.id} item={item} />
             ))}
-          </div>
+          </motion.div>
         ) : null}
       </div>
     </section>
@@ -44,11 +52,11 @@ export function ClinicsSection({ clinics }: { clinics: PublicClinicItem[] }) {
     <section className="section" id="clinics">
       <div className="container">
         <SectionHead heading="Dedicated clinics" />
-        <div className="grid grid--wide">
+        <motion.div className="grid grid--wide" {...reveal} variants={cascade(0.08)}>
           {clinics.map((item) => (
             <ClinicCard key={item.id} item={item} />
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -65,15 +73,17 @@ export function StepsSection() {
     <section className="section" id="how">
       <div className="container">
         <SectionHead heading="How a visit works" />
-        <ol className="steps">
+        <motion.ol className="steps" {...reveal} variants={cascade(0.14)}>
           {STEPS.map((step, i) => (
-            <li className="step reveal" key={step.title}>
-              <span className="step-num">{i + 1}</span>
+            <motion.li className="step" key={step.title} variants={fadeUp} whileHover={LIFT}>
+              <motion.span className="step-num" variants={pop}>
+                {i + 1}
+              </motion.span>
               <h3>{step.title}</h3>
               <p>{step.text}</p>
-            </li>
+            </motion.li>
           ))}
-        </ol>
+        </motion.ol>
       </div>
     </section>
   );
@@ -85,9 +95,9 @@ export function TeamSection({ doctors }: { doctors: DoctorDTO[] }) {
     <section className="section" id="team">
       <div className="container">
         <SectionHead heading="Meet the team" lede="Full team bios coming soon." />
-        <div className="team">
+        <motion.div className="team" {...reveal} variants={cascade(0.1)}>
           {doctors.map((doctor) => (
-            <article className="member reveal" key={doctor.id}>
+            <motion.article className="member" key={doctor.id} variants={fadeUp} whileHover={LIFT}>
               {doctor.photo ? (
                 <div className={`avatar avatar--${doctor.accent} avatar--photo`}>
                   <Image
@@ -108,9 +118,9 @@ export function TeamSection({ doctors }: { doctors: DoctorDTO[] }) {
               <p className={`role--${doctor.accent}`}>
                 {doctor.bio ? `${doctor.specialty} – ${doctor.bio}` : doctor.specialty}
               </p>
-            </article>
+            </motion.article>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -128,18 +138,28 @@ export function WhySection() {
     <section className="section" id="why">
       <div className="container">
         <SectionHead heading="Why patients choose us" />
-        <div className="why reveal">
-          <ul>
+        <motion.div className="why" {...reveal} variants={fadeUp}>
+          <motion.ul variants={cascade(0.12, 0.15)}>
             {REASONS.map((reason) => (
-              <li key={reason}>
-                <span className="check" aria-hidden="true">
-                  <CheckIcon />
-                </span>
+              <motion.li key={reason} variants={slideIn}>
+                <motion.span className="check" aria-hidden="true" variants={pop}>
+                  <svg viewBox="0 0 16 16">
+                    <motion.path
+                      d="M3.5 8.5 6.5 11.5 12.5 4.5"
+                      fill="none"
+                      stroke="#fff"
+                      strokeWidth={2.2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      variants={draw}
+                    />
+                  </svg>
+                </motion.span>
                 {reason}
-              </li>
+              </motion.li>
             ))}
-          </ul>
-        </div>
+          </motion.ul>
+        </motion.div>
       </div>
     </section>
   );
@@ -151,10 +171,10 @@ export function VisitSection({ settings }: { settings: SettingsDTO }) {
     <section className="section" id="visit">
       <div className="container">
         <SectionHead heading="Visit us" />
-        <div className="visit">
+        <motion.div className="visit" {...reveal} variants={cascade(0.12)}>
           <AppointmentForm />
 
-          <div className="panel reveal">
+          <motion.div className="panel" variants={fadeUp}>
             <ul className="contact-list">
               <li>
                 <PinIcon aria-hidden />
@@ -181,8 +201,8 @@ export function VisitSection({ settings }: { settings: SettingsDTO }) {
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

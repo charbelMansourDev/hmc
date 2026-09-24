@@ -72,7 +72,7 @@ export function ServiceCombobox() {
             />
           </svg>
         </ComboboxButton>
-        <ComboboxOptions anchor="bottom start" className="combo-options">
+        <ComboboxOptions anchor="bottom start" transition className="combo-options">
           {groups.length === 0 ? (
             <div className="combo-empty">No services match “{query.trim()}”.</div>
           ) : (

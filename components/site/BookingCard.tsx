@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { flash, useBooking } from "./BookingProvider";
+import { DateListbox } from "./DateListbox";
+import { smoothScrollTo } from "./scroll";
 import { ServiceCombobox } from "./ServiceCombobox";
 
 // Step 1 of the booking flow: pick a service and a preferred date, then hand
@@ -33,13 +35,12 @@ export function BookingCard() {
     setNote(`Great — ${service} on ${day}. Add your name and phone below and our team will confirm.`);
 
     setTimeout(() => {
-      booking.contactRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      const contact = booking.contactRef.current;
+      if (contact) smoothScrollTo(contact, "center");
       booking.nameRef.current?.focus({ preventScroll: true });
-      flash(booking.contactRef.current);
+      flash(contact);
     }, 900);
   };
-
-  const errorClass = (field: "service" | "date") => (booking.errors.has(field) ? " is-error" : "");
 
   return (
     <form className="booking" id="book" noValidate ref={booking.bookingRef} onSubmit={onSubmit}>
@@ -50,23 +51,7 @@ export function BookingCard() {
       </div>
       <div className="field">
         <label htmlFor="date">Date</label>
-        <select
-          className={"select" + errorClass("date")}
-          id="date"
-          name="date"
-          required
-          value={booking.date}
-          onChange={(e) => booking.setDate(e.target.value)}
-        >
-          <option value="" disabled>
-            Pick a date
-          </option>
-          {booking.days.map((day) => (
-            <option key={day.value} value={day.value}>
-              {day.label}
-            </option>
-          ))}
-        </select>
+        <DateListbox />
       </div>
       <button className="btn btn-primary btn-block" type="submit">
         Continue

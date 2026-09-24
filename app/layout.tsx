@@ -30,12 +30,11 @@ export const viewport: Viewport = {
 
 // Runs before first paint: resolve the theme (stored override, else the
 // system preference) and set data-theme so there is no light/dark flash.
-// Also adds the `js` class the reveal styles depend on.
-const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}document.documentElement.classList.add('js');})();`;
+const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    // The inline script adds the `js` class before hydration, hence suppressHydrationWarning.
+    // The inline script sets data-theme on <html> before hydration, hence suppressHydrationWarning.
     <html lang="en" className={`${inter.variable} ${newsreader.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />

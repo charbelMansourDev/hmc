@@ -1,11 +1,13 @@
+import * as motion from "motion/react-client";
 import { telHref } from "@/lib/home-content";
 import type { NavLink, SettingsDTO } from "@/lib/types";
+import { fadeUp, VIEWPORT } from "./motion/variants";
 
 export function SiteFooter({ nav, settings }: { nav: NavLink[]; settings: SettingsDTO }) {
   return (
     <footer className="site-footer">
       <div className="container">
-        <div className="footer-card">
+        <motion.div className="footer-card" initial="hidden" whileInView="show" viewport={VIEWPORT} variants={fadeUp}>
           <div className="footer-brand">
             <h2>Hajj Medical Center</h2>
             <p>Comprehensive, human-centered care in Naccache.</p>
@@ -24,7 +26,7 @@ export function SiteFooter({ nav, settings }: { nav: NavLink[]; settings: Settin
             {settings.email ? <a href={`mailto:${settings.email}`}>{settings.email}</a> : <span>[Email]</span>}
             <span>{settings.address ?? "[Address]"}</span>
           </address>
-        </div>
+        </motion.div>
         <p className="copyright">© {new Date().getFullYear()} Hajj Medical Center. All rights reserved.</p>
       </div>
     </footer>
