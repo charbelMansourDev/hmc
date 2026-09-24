@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { flash, useBooking } from "./BookingProvider";
+import { ServiceCombobox } from "./ServiceCombobox";
 
 // Step 1 of the booking flow: pick a service and a preferred date, then hand
 // off to the "Visit us" form, which collects name and phone and submits.
@@ -45,27 +46,7 @@ export function BookingCard() {
       <h2>Book a visit</h2>
       <div className="field">
         <label htmlFor="service">Service</label>
-        <select
-          className={"select" + errorClass("service")}
-          id="service"
-          name="service"
-          required
-          value={booking.serviceId}
-          onChange={(e) => booking.setServiceId(e.target.value)}
-        >
-          <option value="" disabled>
-            Choose a service
-          </option>
-          {booking.groups.map((group) => (
-            <optgroup key={group.label} label={group.label}>
-              {group.options.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.label}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-        </select>
+        <ServiceCombobox />
       </div>
       <div className="field">
         <label htmlFor="date">Date</label>
