@@ -1,33 +1,22 @@
 import "server-only";
 import { AppointmentRequest } from "@/models/AppointmentRequest";
 import { Service } from "@/models/Service";
-import { BOOKING_DAYS, type AppointmentStatus } from "./categories";
+import { isBookableDate } from "./booking-dates";
+import type { AppointmentStatus } from "./categories";
 import { connectDB } from "./db";
 import { toAppointmentDTO } from "./dto";
 import { assertObjectId, badRequest, notFound } from "./http";
 import type { AppointmentInput } from "./schemas";
 import type { AppointmentDTO } from "./types";
 
-const DAY_MS = 24 * 60 * 60 * 1000;
 export const APPOINTMENTS_PAGE_SIZE = 25;
-
-/** Day number (UTC) for a real YYYY-MM-DD calendar date, or null. */
-function dayNumber(value: string): number | null {
-  const [y, m, d] = value.split("-").map(Number);
-  const date = new Date(Date.UTC(y, m - 1, d));
-  if (date.getUTCFullYear() !== y || date.getUTCMonth() !== m - 1 || date.getUTCDate() !== d) return null;
-  return date.getTime() / DAY_MS;
-}
 
 export async function createAppointment(input: AppointmentInput): Promise<AppointmentDTO> {
   // Honeypot: only bots fill the hidden "website" field.
   if (input.website) throw badRequest("Invalid request.");
 
-  // Same window the form offers (today + 13 days), with a day of slack either
-  // side so visitors in other time zones are not rejected.
-  const day = dayNumber(input.preferredDate);
-  const today = Math.floor(Date.now() / DAY_MS);
-  if (day === null || day < today - 1 || day > today + BOOKING_DAYS) {
+  // Only the dates the form offers: the next two weeks, weekends excluded.
+  if (!isBookableDate(input.preferredDate)) {
     throw badRequest("Please check the highlighted fields.", {
       preferredDate: "Pick a date from the list.",
     });

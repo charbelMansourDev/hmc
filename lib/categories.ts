@@ -69,8 +69,11 @@ export const ACCENT_LABELS: Record<Accent, string> = {
   blue: "Blue",
 };
 
-/** Booking window offered on the public form (today + next 13 days). */
+/** Booking window offered on the public form (today + next 13 days, closed days skipped). */
 export const BOOKING_DAYS = 14;
+
+/** Days of the week the clinic is closed (0 = Sunday … 6 = Saturday); never offered for booking. */
+export const CLOSED_WEEKDAYS: readonly number[] = [0, 6];
 
 /** Appointment requests are deleted automatically after this many days. */
 export const APPOINTMENT_RETENTION_DAYS = 90;

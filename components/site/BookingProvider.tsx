@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { BOOKING_DAYS } from "@/lib/categories";
+import { upcomingBookingDates } from "@/lib/booking-dates";
 import type { BookingGroup } from "@/lib/types";
 
 export type DayOption = { value: string; label: string; short: string };
@@ -42,16 +42,13 @@ export function flash(el: HTMLElement | null) {
   el.classList.add("is-flash");
 }
 
-const pad = (n: number) => String(n).padStart(2, "0");
-
+/** The next two weeks without the days the clinic is closed (weekends). */
 function nextDays(): DayOption[] {
   const fmt = new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short" });
-  const now = new Date();
-  return Array.from({ length: BOOKING_DAYS }, (_, i) => {
-    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
-    const short = fmt.format(d);
-    const prefix = i === 0 ? "Today · " : i === 1 ? "Tomorrow · " : "";
-    return { value: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`, label: prefix + short, short };
+  return upcomingBookingDates().map(({ value, date, offset }) => {
+    const short = fmt.format(date);
+    const prefix = offset === 0 ? "Today · " : offset === 1 ? "Tomorrow · " : "";
+    return { value, label: prefix + short, short };
   });
 }
 
