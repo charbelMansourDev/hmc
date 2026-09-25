@@ -1,17 +1,20 @@
 import * as motion from "motion/react-client";
 import Image from "next/image";
 import { telHref } from "@/lib/home-content";
+import { publicMapboxToken } from "@/lib/mapbox";
 import type { DoctorDTO, HomeSection, PublicClinicItem, SettingsDTO } from "@/lib/types";
 import { AppointmentForm } from "./AppointmentForm";
 import { ClinicCard, FeatureCard, ServiceCard } from "./Cards";
+import { RevealCard } from "./RevealCard";
 import { ClockIcon, MailIcon, PersonSilhouette, PhoneIcon, PinIcon } from "./icons";
+import { LocationMap } from "./LocationMap";
 import { cascade, draw, fadeUp, pop, slideIn, VIEWPORT } from "./motion/variants";
 
-// Every block reveals once as it scrolls into view (initial="hidden" ->
-// whileInView="show"); children inherit the labels and stagger in.
+// Section heads and single blocks reveal once as they scroll into view
+// (initial="hidden" -> whileInView="show"); children inherit the labels and
+// stagger in. Cards reveal individually instead (TiltCard / RevealCard), so a
+// tall grid keeps fading in row by row as you scroll down it.
 const reveal = { initial: "hidden", whileInView: "show", viewport: VIEWPORT } as const;
-
-const LIFT = { y: -6, transition: { type: "spring", stiffness: 320, damping: 22 } } as const;
 
 function SectionHead({ heading, lede }: { heading: string; lede?: string | null }) {
   return (
@@ -28,18 +31,18 @@ export function ServiceSection({ section }: { section: HomeSection }) {
       <div className="container">
         <SectionHead heading={section.heading} lede={section.lede} />
         {section.cards.length > 0 ? (
-          <motion.div className={section.wide ? "grid grid--wide" : "grid"} {...reveal} variants={cascade(0.055)}>
+          <div className={section.wide ? "grid grid--wide" : "grid"}>
             {section.cards.map((item) => (
               <ServiceCard key={item.id} item={item} wide={section.wide} />
             ))}
-          </motion.div>
+          </div>
         ) : null}
         {section.features.length > 0 ? (
-          <motion.div className="features" {...reveal} variants={cascade(0.12)}>
+          <div className="features">
             {section.features.map((item) => (
               <FeatureCard key={item.id} item={item} />
             ))}
-          </motion.div>
+          </div>
         ) : null}
       </div>
     </section>
@@ -52,11 +55,11 @@ export function ClinicsSection({ clinics }: { clinics: PublicClinicItem[] }) {
     <section className="section" id="clinics">
       <div className="container">
         <SectionHead heading="Dedicated clinics" />
-        <motion.div className="grid grid--wide" {...reveal} variants={cascade(0.08)}>
+        <div className="grid grid--wide">
           {clinics.map((item) => (
             <ClinicCard key={item.id} item={item} />
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -73,17 +76,17 @@ export function StepsSection() {
     <section className="section" id="how">
       <div className="container">
         <SectionHead heading="How a visit works" />
-        <motion.ol className="steps" {...reveal} variants={cascade(0.14)}>
+        <ol className="steps">
           {STEPS.map((step, i) => (
-            <motion.li className="step" key={step.title} variants={fadeUp} whileHover={LIFT}>
+            <RevealCard as="li" className="step" key={step.title}>
               <motion.span className="step-num" variants={pop}>
                 {i + 1}
               </motion.span>
               <h3>{step.title}</h3>
               <p>{step.text}</p>
-            </motion.li>
+            </RevealCard>
           ))}
-        </motion.ol>
+        </ol>
       </div>
     </section>
   );
@@ -95,9 +98,9 @@ export function TeamSection({ doctors }: { doctors: DoctorDTO[] }) {
     <section className="section" id="team">
       <div className="container">
         <SectionHead heading="Meet the team" lede="Full team bios coming soon." />
-        <motion.div className="team" {...reveal} variants={cascade(0.1)}>
+        <div className="team">
           {doctors.map((doctor) => (
-            <motion.article className="member" key={doctor.id} variants={fadeUp} whileHover={LIFT}>
+            <RevealCard as="article" className="member" key={doctor.id}>
               {doctor.photo ? (
                 <div className={`avatar avatar--${doctor.accent} avatar--photo`}>
                   <Image
@@ -118,9 +121,9 @@ export function TeamSection({ doctors }: { doctors: DoctorDTO[] }) {
               <p className={`role--${doctor.accent}`}>
                 {doctor.bio ? `${doctor.specialty} – ${doctor.bio}` : doctor.specialty}
               </p>
-            </motion.article>
+            </RevealCard>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -166,7 +169,6 @@ export function WhySection() {
 }
 
 export function VisitSection({ settings }: { settings: SettingsDTO }) {
-  const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(settings.mapQuery)}&z=15&output=embed`;
   return (
     <section className="section" id="visit">
       <div className="container">
@@ -194,12 +196,7 @@ export function VisitSection({ settings }: { settings: SettingsDTO }) {
               </li>
             </ul>
             <div className="map">
-              <iframe
-                title={`Map of ${settings.mapQuery}`}
-                src={mapSrc}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+              <LocationMap token={publicMapboxToken()} query={settings.mapQuery} address={settings.address} />
             </div>
           </motion.div>
         </motion.div>

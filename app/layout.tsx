@@ -22,20 +22,24 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#eaf1f8" },
-    { media: "(prefers-color-scheme: dark)", color: "#0d151d" },
-  ],
+  // Dark is the default theme; ThemeToggle updates this when light is chosen.
+  themeColor: "#0d151d",
 };
 
-// Runs before first paint: resolve the theme (stored override, else the
-// system preference) and set data-theme so there is no light/dark flash.
-const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(t!=='light'&&t!=='dark'){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`;
+// Dark is the default and is rendered on the server (data-theme="dark" below),
+// so it also applies without JavaScript. This runs before first paint and only
+// switches to light for visitors who chose light with the toggle.
+const themeScript = `(function(){try{if(localStorage.getItem('theme')==='light'){document.documentElement.setAttribute('data-theme','light');}}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    // The inline script sets data-theme on <html> before hydration, hence suppressHydrationWarning.
-    <html lang="en" className={`${inter.variable} ${newsreader.variable}`} suppressHydrationWarning>
+    // The inline script may switch data-theme before hydration, hence suppressHydrationWarning.
+    <html
+      lang="en"
+      data-theme="dark"
+      className={`${inter.variable} ${newsreader.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

@@ -62,7 +62,7 @@ export function SettingsForm({ settings }: { settings: SettingsDTO }) {
         >
           <input id="openingHours" className={inputClass} value={openingHours} maxLength={80} onChange={(e) => setOpeningHours(e.target.value)} />
         </Field>
-        <Field label="Map location" htmlFor="mapQuery" error={err("mapQuery")} hint="What the Google map searches for, e.g. “Naccache, Lebanon”.">
+        <Field label="Map location" htmlFor="mapQuery" error={err("mapQuery")} hint="A place name, e.g. “Naccache, Lebanon”, or exact coordinates copied from Google Maps, e.g. “33.9228, 35.5971”.">
           <input id="mapQuery" className={inputClass} value={mapQuery} maxLength={120} onChange={(e) => setMapQuery(e.target.value)} aria-invalid={Boolean(err("mapQuery"))} />
         </Field>
       </Card>

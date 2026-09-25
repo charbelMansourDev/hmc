@@ -39,6 +39,7 @@ Environment Variables** for deployment. `.env.example` lists the names.
 | `ADMIN_PASSWORD` | **yes** (seed) | seed only | 12+ chars. Only the seed script reads this. |
 | `APP_URL` | optional | app | Public URL, e.g. `https://…`. Used **only** in the appointment-notification email link. |
 | `BLOB_READ_WRITE_TOKEN` | for uploads | app | Enables Vercel Blob. **Required to upload images in the CMS on Vercel** (the filesystem there is read-only). Auto-added when you create a Blob store. |
+| `MAPBOX_TOKEN` | optional | app | Public Mapbox token (`pk.…`) for the "Visit us" map (dark "night" style in dark mode). Read at request time; secret `sk.…` tokens are ignored. Restrict it to your site URLs in the Mapbox dashboard. Without it, a Google map is shown. |
 | `SMTP_HOST` `SMTP_PORT` `SMTP_USER` `SMTP_PASS` `SMTP_FROM` | optional | app | Appointment-notification email. If any is missing, email is silently disabled (requests are still saved). |
 | `APPOINTMENT_NOTIFY_TO` | optional | app | Recipient of appointment notifications. |
 | `MAIL_TRANSPORT=json` | dev only | app | Logs the email to the server console instead of sending it. Ignored in production. |

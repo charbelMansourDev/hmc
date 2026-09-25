@@ -6,16 +6,18 @@ type Theme = "light" | "dark";
 
 const META_COLOR: Record<Theme, string> = { light: "#eaf1f8", dark: "#0d151d" };
 
-/** Light/dark toggle. The head script sets the initial theme; this flips and
- *  remembers it. Defaults follow the OS until the visitor makes a choice.
- *  Both icons are always rendered: CSS (theme.css) morphs between them off
- *  data-theme, so the right one shows from the first paint with no flicker. */
+/** Light/dark toggle. Dark is the default (rendered on the server); the head
+ *  script switches to light for visitors who chose it. This flips and
+ *  remembers the choice. Both icons are always rendered: CSS (theme.css)
+ *  morphs between them off data-theme, so the right one shows from the first
+ *  paint with no flicker. */
 export function ThemeToggle({ className }: { className?: string }) {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>("dark");
 
   useEffect(() => {
-    const current = document.documentElement.getAttribute("data-theme");
-    setTheme(current === "dark" ? "dark" : "light");
+    const current: Theme = document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
+    setTheme(current);
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", META_COLOR[current]);
   }, []);
 
   const toggle = () => {

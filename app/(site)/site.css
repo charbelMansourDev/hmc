@@ -691,6 +691,88 @@ textarea.input { height: auto; min-height: 48px; padding: 13px 16px; resize: ver
   filter: saturate(0.85);
 }
 
+/* Mapbox map (components/site/LocationMap.tsx). Two classes, so it wins over
+   mapbox-gl.css setting position: relative on the container. */
+.map .map-canvas {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.9s var(--ease-out);
+}
+.map .map-canvas.is-loaded { opacity: 1; }
+.map .mapboxgl-canvas:focus-visible { outline: 2px solid var(--color-teal); outline-offset: -2px; }
+
+.map-pin {
+  position: relative;
+  width: 42px;
+  height: 52px;
+  cursor: pointer;
+}
+.map-pin-head {
+  position: absolute;
+  left: 3px;
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50% 50% 50% 0;
+  rotate: -45deg;
+  background: var(--grad-logo);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.92), 0 10px 22px -6px rgba(0, 0, 0, 0.55);
+  transition: scale 0.25s var(--ease-out);
+}
+.map-pin-head svg { width: 17px; height: 17px; rotate: 45deg; }
+.map-pin:hover .map-pin-head,
+.map-pin:focus-visible .map-pin-head { scale: 1.08; }
+.map-pin:focus-visible { outline: none; }
+.map-pin-pulse {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 14px;
+  height: 14px;
+  translate: -50% 40%;
+  border-radius: 50%;
+  background: rgba(31, 184, 165, 0.9);
+  box-shadow: 0 0 0 0 rgba(31, 184, 165, 0.6);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .map-pin-pulse { animation: mapPinPulse 2.2s ease-out infinite; }
+}
+@keyframes mapPinPulse {
+  to { box-shadow: 0 0 0 26px rgba(31, 184, 165, 0); }
+}
+
+.map .mapboxgl-popup-content {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-sans);
+}
+.map .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip { border-top-color: var(--color-surface); }
+.map .mapboxgl-popup-anchor-top .mapboxgl-popup-tip { border-bottom-color: var(--color-surface); }
+.map-popup { display: grid; gap: 3px; font-size: 13px; line-height: 1.4; }
+.map-popup strong { font-family: var(--font-serif); font-size: 15px; font-weight: 600; }
+.map-popup span { color: var(--color-muted); }
+.map-popup a { margin-top: 4px; font-weight: 600; color: var(--color-teal); }
+.map-popup a:hover { text-decoration: underline; }
+
+/* Mapbox controls in the site's dark theme. */
+:root[data-theme="dark"] .map .mapboxgl-ctrl-group {
+  background: rgba(22, 33, 44, 0.92);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 6px 16px -6px rgba(0, 0, 0, 0.6);
+}
+:root[data-theme="dark"] .map .mapboxgl-ctrl-group button + button { border-top-color: rgba(255, 255, 255, 0.08); }
+:root[data-theme="dark"] .map .mapboxgl-ctrl-group .mapboxgl-ctrl-icon { filter: invert(1) brightness(0.9); }
+:root[data-theme="dark"] .map .mapboxgl-ctrl-attrib {
+  background: rgba(13, 21, 29, 0.6);
+  color: #8a97a4;
+}
+:root[data-theme="dark"] .map .mapboxgl-ctrl-attrib a { color: #b3bfcb; }
+
 /* Footer ----------------------------------------------------------------- */
 .site-footer { padding: clamp(72px, 10vw, 120px) 0 36px; }
 
@@ -927,6 +1009,9 @@ textarea.input { height: auto; min-height: 48px; padding: 13px 16px; resize: ver
     linear-gradient(180deg, rgba(28, 42, 56, 0.55) 0%, rgba(13, 21, 29, 0) 100%);
 }
 
+/* The hero lede sits over the aurora: a lighter grey keeps it comfortably readable. */
+:root[data-theme="dark"] .hero-lede { color: #b3bfcb; }
+
 :root[data-theme="dark"] .nav {
   background: rgba(22, 33, 44, 0.72);
   border-color: rgba(255, 255, 255, 0.06);
@@ -984,7 +1069,8 @@ textarea.input { height: auto; min-height: 48px; padding: 13px 16px; resize: ver
 :root[data-theme="dark"] .tags li { background: #22303c; }
 
 :root[data-theme="dark"] .map { background: #1b2732; }
-:root[data-theme="dark"] .map iframe { filter: saturate(0.8) brightness(0.85); }
+/* Google fallback (no Mapbox token): invert it into a dark map. */
+:root[data-theme="dark"] .map iframe { filter: invert(0.9) hue-rotate(180deg) saturate(0.75) brightness(0.95) contrast(0.92); }
 
 :root[data-theme="dark"] .footer-card {
   background: rgba(24, 35, 46, 0.9);
@@ -1082,6 +1168,49 @@ textarea.input { height: auto; min-height: 48px; padding: 13px 16px; resize: ver
 .listbox-button[data-open] .combo-arrow svg { transform: rotate(180deg); }
 :root[data-theme="dark"] .listbox-value.is-placeholder { color: #6d7b88; }
 
+/* Custom scrollbars (page + dropdown lists) ------------------------------ */
+/* A slim rounded teal thumb on a track that blends into the page, in both
+   themes. Mouse/trackpad devices only: phones and tablets keep their native
+   overlay scrollbars. */
+:root {
+  --scrollbar-track: var(--color-bg);
+  --scrollbar-thumb: rgba(14, 122, 112, 0.32);
+  --scrollbar-thumb-hover: rgba(14, 122, 112, 0.55);
+  --scrollbar-thumb-active: var(--color-teal);
+}
+:root[data-theme="dark"] {
+  --scrollbar-thumb: rgba(31, 184, 165, 0.34);
+  --scrollbar-thumb-hover: rgba(31, 184, 165, 0.58);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* Chromium and Safari. (Chromium ignores these on any element that also sets
+     the standard scrollbar-color/width, so those stay in the fallback below.) */
+  ::-webkit-scrollbar { width: 14px; height: 14px; }
+  ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+  ::-webkit-scrollbar-thumb {
+    min-height: 48px;
+    border: 4px solid transparent;
+    border-radius: 999px;
+    background-color: var(--scrollbar-thumb);
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover { background-color: var(--scrollbar-thumb-hover); }
+  ::-webkit-scrollbar-thumb:active { background-color: var(--scrollbar-thumb-active); }
+  ::-webkit-scrollbar-corner { background: transparent; }
+
+  /* Dropdown lists: a slimmer thumb floating inside the rounded panel. */
+  .combo-options::-webkit-scrollbar { width: 12px; }
+  .combo-options::-webkit-scrollbar-track { background: transparent; margin: 10px 0; }
+  .combo-options::-webkit-scrollbar-thumb { min-height: 36px; border-width: 3px; }
+
+  /* Firefox (no ::-webkit-scrollbar): the standard properties. */
+  @supports not selector(::-webkit-scrollbar) {
+    html { scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track); }
+    .combo-options { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
+  }
+}
+
 /* ------------------------------------------------------------------------
    Motion layer. The hero entrance is CSS (it runs on first paint and never
    waits for hydration); everything scroll- or pointer-driven is Motion.
@@ -1117,7 +1246,24 @@ textarea.input { height: auto; min-height: 48px; padding: 13px 16px; resize: ver
   to { opacity: 1; transform: none; }
 }
 
-/* Ambient glow: slowly drifting orbs over the original static glow. */
+/* Aurora (WebGL, components/site/Aurora.tsx): drawn at a fraction of the screen
+   resolution and scaled up; it fades in once its first frame is ready and
+   fades out towards the bottom of the hero. */
+.aurora {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.6s var(--ease-out);
+  -webkit-mask-image: linear-gradient(180deg, #000 52%, transparent 98%);
+  mask-image: linear-gradient(180deg, #000 52%, transparent 98%);
+  will-change: transform;
+}
+.aurora.is-ready { opacity: 1; }
+
+/* Fallback without WebGL: slowly drifting orbs over the original static glow. */
 .glow-orbs {
   position: absolute;
   inset: 0;

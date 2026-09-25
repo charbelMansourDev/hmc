@@ -31,9 +31,9 @@
   --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
-/* Dark theme. The no-FOUC script in the root layout resolves the visitor's
-   choice (stored override, else system preference) and sets data-theme on
-   <html> before first paint. Overriding these token values flips both the
+/* Dark theme — the default. The root layout renders data-theme="dark" on
+   <html>; its no-FOUC script switches to light before first paint only for
+   visitors who chose light with the toggle. Overriding these token values flips both the
    public site (var() usages in site.css) and the CMS (Tailwind utilities
    generated from the same tokens). Surface-specific overrides for hardcoded
    colours live at the end of site.css. */
@@ -59,6 +59,10 @@
   --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.3), 0 14px 34px -16px rgba(0, 0, 0, 0.6);
   --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.35), 0 24px 48px -20px rgba(0, 0, 0, 0.7);
 }
+
+/* Browser-drawn UI (form controls, native menus, Firefox scrollbars) follows the theme. */
+:root { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
 
 /* Theme toggle icons (public nav + CMS sidebar). Both icons are stacked in the
    button's grid; the inactive one spins away. CSS transitions don't run on the

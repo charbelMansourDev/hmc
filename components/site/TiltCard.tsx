@@ -1,21 +1,14 @@
 "use client";
 
-import { motion, useMotionValue, useReducedMotion, useSpring, useTransform, type Variants } from "motion/react";
+import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
+import { useCardReveal } from "./motion/useCardReveal";
+import { cardIn } from "./motion/variants";
 
-// Cards reveal through their parent grid's stagger ("hidden" -> "show"). On hover
-// they lift, zoom their image (the inner .media-zoom inherits "hover"), tilt
-// towards the cursor and catch a soft glare on the photo. Tilt and glare are
-// mouse-only and are skipped entirely when the visitor prefers reduced motion.
-const variants: Variants = {
-  hidden: { opacity: 0, y: 28 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { y: { type: "spring", stiffness: 140, damping: 20 }, opacity: { duration: 0.6 } },
-  },
-  hover: { y: -6, transition: { type: "spring", stiffness: 320, damping: 22 } },
-};
-
+// Each card fades up on its own as it scrolls into view ("hidden" -> "show",
+// staggered by its column; see useCardReveal). On hover it lifts, zooms its
+// image (the inner .media-zoom inherits "hover"), tilts towards the cursor and
+// catches a soft glare on the photo. Tilt and glare are mouse-only and are
+// skipped entirely when the visitor prefers reduced motion.
 const TILT_SPRING = { stiffness: 180, damping: 18, mass: 0.6 };
 
 type Props = {
@@ -31,6 +24,7 @@ type Props = {
 
 export function TiltCard({ as = "a", className, href, service, tilt = 5, children }: Props) {
   const reduce = useReducedMotion();
+  const { ref, ...reveal } = useCardReveal<HTMLElement>();
   const px = useMotionValue(0.5);
   const py = useMotionValue(0.5);
   const rotateX = useSpring(useTransform(py, [0, 1], [tilt, -tilt]), TILT_SPRING);
@@ -57,8 +51,9 @@ export function TiltCard({ as = "a", className, href, service, tilt = 5, childre
   };
 
   const shared = {
+    ...reveal,
     className,
-    variants,
+    variants: cardIn,
     whileHover: "hover",
     onPointerMove,
     onPointerLeave,
@@ -66,10 +61,14 @@ export function TiltCard({ as = "a", className, href, service, tilt = 5, childre
   };
 
   if (as === "article") {
-    return <motion.article {...shared}>{children}</motion.article>;
+    return (
+      <motion.article ref={ref as React.Ref<HTMLElement>} {...shared}>
+        {children}
+      </motion.article>
+    );
   }
   return (
-    <motion.a {...shared} href={href} data-service={service}>
+    <motion.a ref={ref as React.Ref<HTMLAnchorElement>} {...shared} href={href} data-service={service}>
       {children}
     </motion.a>
   );

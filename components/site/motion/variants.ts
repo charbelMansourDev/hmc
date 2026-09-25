@@ -52,6 +52,28 @@ export const draw: Variants = {
   },
 };
 
+/**
+ * Cards (service, feature, clinic, step, team): each card fades up on its own
+ * as it scrolls into view, rather than the whole grid at once. `custom` is the
+ * card's stagger delay in seconds (its column within the row, see
+ * useCardReveal), and children are held back by the same amount.
+ */
+export const cardIn: Variants = {
+  hidden: { opacity: 0, y: 36, scale: 0.97 },
+  show: (delay: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      delayChildren: delay,
+      opacity: { duration: 0.75, ease: EASE_OUT, delay },
+      scale: { duration: 0.75, ease: EASE_OUT, delay },
+      y: { ...SETTLE, delay },
+    },
+  }),
+  hover: { y: -6, transition: { type: "spring", stiffness: 320, damping: 22 } },
+};
+
 /** Card image: inherits "hover" from the card and zooms in on a spring. */
 export const zoom: Variants = {
   hidden: { scale: 1 },
