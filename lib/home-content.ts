@@ -21,6 +21,7 @@ export function buildHomeContent(input: {
   clinics: ClinicDTO[];
   doctors: DoctorDTO[];
   settings: SettingsDTO;
+  reviewsEnabled: boolean;
 }): HomeContent {
   const services = [...input.services].sort(bySortOrder);
   const bookable = new Map(services.filter((s) => !s.bookAsId).map((s) => [s.id, s]));
@@ -62,6 +63,7 @@ export function buildHomeContent(input: {
 
   return {
     settings: input.settings,
+    reviewsEnabled: input.reviewsEnabled,
     sections,
     clinics,
     doctors: [...input.doctors].sort(bySortOrder),

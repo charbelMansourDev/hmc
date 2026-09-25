@@ -74,3 +74,16 @@ export const BOOKING_DAYS = 14;
 
 /** Appointment requests are deleted automatically after this many days. */
 export const APPOINTMENT_RETENTION_DAYS = 90;
+
+/**
+ * Where the public booking form sends requests: straight to the clinic's
+ * WhatsApp (nothing is stored), or into the CMS inbox (plus optional email).
+ */
+export const BOOKING_CHANNELS = ["whatsapp", "cms"] as const;
+export type BookingChannel = (typeof BOOKING_CHANNELS)[number];
+
+/** Most Google places the reviews section may combine (one API call each per load). */
+export const MAX_GOOGLE_PLACES = 3;
+
+/** The reviews section hides Google reviews rated below this (and says so). */
+export const REVIEW_MIN_RATING = 4;

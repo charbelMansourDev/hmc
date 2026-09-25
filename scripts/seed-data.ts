@@ -795,10 +795,15 @@ export const seedDoctors: SeedDoctor[] = [
   }
 ];
 
+// Keep in step with SETTINGS_DEFAULTS in lib/settings.ts. The Place ID is the
+// clinic's Google Maps listing (the only Places data Google lets us store).
 export const seedSettings = {
   phone: "+961 4 520 065",
   email: null,
-  address: null,
-  openingHours: null,
-  mapQuery: "Naccache, Lebanon",
+  address: "Ground floor, Naccache, Green Zone A, bldg, 71, Naqqache",
+  openingHours: "Mon–Fri, 8:30 AM – 6:00 PM · Sat & Sun closed",
+  mapQuery: "33.9285959, 35.5966253",
+  bookingChannel: "whatsapp" as const,
+  whatsapp: null,
+  googlePlaceIds: ["ChIJF7o0ARI_HxURCkCkKINPVC8"],
 };

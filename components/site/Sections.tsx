@@ -2,12 +2,14 @@ import * as motion from "motion/react-client";
 import Image from "next/image";
 import { telHref } from "@/lib/home-content";
 import { publicMapboxToken } from "@/lib/mapbox";
+import { bookingWhatsApp } from "@/lib/phone";
 import type { DoctorDTO, HomeSection, PublicClinicItem, SettingsDTO } from "@/lib/types";
 import { AppointmentForm } from "./AppointmentForm";
 import { ClinicCard, FeatureCard, ServiceCard } from "./Cards";
 import { RevealCard } from "./RevealCard";
 import { ClockIcon, MailIcon, PersonSilhouette, PhoneIcon, PinIcon } from "./icons";
 import { LocationMap } from "./LocationMap";
+import { OpeningHours } from "./OpeningHours";
 import { cascade, draw, fadeUp, pop, slideIn, VIEWPORT } from "./motion/variants";
 
 // Section heads and single blocks reveal once as they scroll into view
@@ -174,7 +176,7 @@ export function VisitSection({ settings }: { settings: SettingsDTO }) {
       <div className="container">
         <SectionHead heading="Visit us" />
         <motion.div className="visit" {...reveal} variants={cascade(0.12)}>
-          <AppointmentForm />
+          <AppointmentForm whatsapp={bookingWhatsApp(settings)} />
 
           <motion.div className="panel" variants={fadeUp}>
             <ul className="contact-list">
@@ -186,13 +188,15 @@ export function VisitSection({ settings }: { settings: SettingsDTO }) {
                 <PhoneIcon aria-hidden />
                 <a href={telHref(settings.phone)}>{settings.phone}</a>
               </li>
-              <li>
-                <MailIcon aria-hidden />
-                {settings.email ? <a href={`mailto:${settings.email}`}>{settings.email}</a> : "[Email]"}
-              </li>
+              {settings.email ? (
+                <li>
+                  <MailIcon aria-hidden />
+                  <a href={`mailto:${settings.email}`}>{settings.email}</a>
+                </li>
+              ) : null}
               <li>
                 <ClockIcon aria-hidden />
-                {settings.openingHours ?? "[Hours]"}
+                {settings.openingHours ? <OpeningHours value={settings.openingHours} /> : "[Hours]"}
               </li>
             </ul>
             <div className="map">

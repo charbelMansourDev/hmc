@@ -6,6 +6,7 @@ import { Service } from "@/models/Service";
 import { SiteSettings, SETTINGS_SINGLETON } from "@/models/SiteSettings";
 import { connectDB } from "./db";
 import { toClinicDTO, toDoctorDTO, toServiceDTO, toSettingsDTO } from "./dto";
+import { googlePlacesKey } from "./google-reviews";
 import { buildHomeContent } from "./home-content";
 import { SETTINGS_DEFAULTS } from "./settings";
 import type { HomeContent } from "./types";
@@ -20,10 +21,13 @@ export const getHomeContent = cache(async (): Promise<HomeContent> => {
     SiteSettings.findOne({ singleton: SETTINGS_SINGLETON }).lean(),
   ]);
 
+  const siteSettings = settings ? toSettingsDTO(settings) : { ...SETTINGS_DEFAULTS, updatedAt: null };
   return buildHomeContent({
     services: services.map(toServiceDTO),
     clinics: clinics.map(toClinicDTO),
     doctors: doctors.map(toDoctorDTO),
-    settings: settings ? toSettingsDTO(settings) : { ...SETTINGS_DEFAULTS, updatedAt: null },
+    settings: siteSettings,
+    // Reviews load in the browser later; here we only decide whether to render the section.
+    reviewsEnabled: Boolean(googlePlacesKey()) && siteSettings.googlePlaceIds.length > 0,
   });
 });

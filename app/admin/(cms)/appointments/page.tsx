@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AppointmentsTable } from "@/components/admin/AppointmentsTable";
+import { BookingChannelNotice } from "@/components/admin/BookingChannelNotice";
 import { PageHeader } from "@/components/admin/ui";
 import { countAppointmentsByStatus, listAppointments } from "@/lib/appointments";
 import { requireAdmin } from "@/lib/auth/guard";
 import { APPOINTMENT_RETENTION_DAYS, APPOINTMENT_STATUSES, type AppointmentStatus } from "@/lib/categories";
+import { getSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Appointments" };
@@ -21,7 +23,11 @@ export default async function AppointmentsPage({
   const status = APPOINTMENT_STATUSES.find((s) => s === params.status);
   const page = Math.max(1, Math.min(10_000, Number.parseInt(params.page ?? "1", 10) || 1));
 
-  const [result, counts] = await Promise.all([listAppointments({ status, page }), countAppointmentsByStatus()]);
+  const [result, counts, settings] = await Promise.all([
+    listAppointments({ status, page }),
+    countAppointmentsByStatus(),
+    getSettings(),
+  ]);
   const total = counts.new + counts.contacted + counts.closed;
 
   const tabs = [
@@ -42,6 +48,7 @@ export default async function AppointmentsPage({
         title="Appointment requests"
         description={`Call-back requests from the website: name, phone, service and preferred date only. Deleted automatically after ${APPOINTMENT_RETENTION_DAYS} days.`}
       />
+      <BookingChannelNotice settings={settings} />
       <div className="mb-4 flex flex-wrap gap-2">
         {tabs.map((t) => {
           const active = t.key === status;

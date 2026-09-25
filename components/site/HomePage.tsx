@@ -1,6 +1,7 @@
 import type { HomeContent } from "@/lib/types";
 import { AmbientGlow } from "./AmbientGlow";
 import { BookingProvider } from "./BookingProvider";
+import { GoogleReviewsSection } from "./GoogleReviews";
 import { Hero } from "./Hero";
 import { MotionProvider } from "./motion/MotionProvider";
 import { ScrollProgress } from "./ScrollProgress";
@@ -33,6 +34,7 @@ export function HomePage({ content }: { content: HomeContent }) {
           <StepsSection />
           <TeamSection doctors={content.doctors} />
           <WhySection />
+          {content.reviewsEnabled ? <GoogleReviewsSection /> : null}
           <VisitSection settings={content.settings} />
         </main>
         <SiteFooter nav={content.nav} settings={content.settings} />

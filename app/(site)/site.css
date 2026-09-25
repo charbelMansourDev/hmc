@@ -316,6 +316,11 @@ textarea.input { height: auto; min-height: 48px; padding: 13px 16px; resize: ver
   line-height: 1.45;
 }
 .form-success.is-visible { display: block; animation: fadeUp 0.35s ease both; }
+.form-success-link {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 
 /* Highlights strip */
 .highlights {
@@ -352,6 +357,9 @@ textarea.input { height: auto; min-height: 48px; padding: 13px 16px; resize: ver
   color: var(--color-mint);
 }
 .highlight-icon svg { width: 17px; height: 17px; }
+
+/* Opening hours: each "·"-separated part on its own line (OpeningHours.tsx). */
+.hours { display: grid; }
 
 /* Sections --------------------------------------------------------------- */
 .section {
@@ -809,9 +817,17 @@ textarea.input { height: auto; min-height: 48px; padding: 13px 16px; resize: ver
   font-style: normal;
   color: var(--color-ink-2);
   text-align: right;
+  /* A long address wraps instead of squeezing the links column. */
+  justify-self: end;
+  max-width: 290px;
+  text-wrap: balance;
 }
 
-.copyright {
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 24px;
   margin-top: 18px;
   font-size: 12px;
   color: var(--color-muted);
@@ -942,7 +958,7 @@ textarea.input { height: auto; min-height: 48px; padding: 13px 16px; resize: ver
 
   .footer-card { grid-template-columns: 1fr; gap: 18px; padding: 22px; }
   .footer-links { grid-row: auto; }
-  .footer-contact { text-align: left; }
+  .footer-contact { justify-self: start; text-align: left; }
 }
 
 /* ------------------------------------------------------------------------
@@ -1391,6 +1407,230 @@ textarea.input { height: auto; min-height: 48px; padding: 13px 16px; resize: ver
 @media (hover: none), (prefers-reduced-motion: reduce) {
   .card-media::before,
   .feature-media::before { content: none; }
+}
+
+/* Google reviews ("What patients say", components/site/GoogleReviews.tsx) --- */
+.reviews-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+.reviews-head .section-head { margin-bottom: 0; }
+
+.section-head .reviews-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  min-height: 34px;
+  margin-top: 10px;
+}
+.reviews-summary strong {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-ink);
+}
+
+.stars {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: 90px;
+  height: 18px;
+}
+.stars svg { display: block; width: 90px; height: 18px; fill: currentColor; }
+.stars-empty { display: block; color: rgba(20, 50, 80, 0.14); }
+.stars-filled {
+  position: absolute;
+  inset: 0 auto 0 0;
+  overflow: hidden;
+  color: #f4b400;
+}
+
+.reviews-nav { display: flex; flex: none; gap: 8px; }
+.reviews-nav button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--color-line);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-ink-2);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+}
+.reviews-nav button:hover:not(:disabled) { background: var(--color-teal-soft); color: var(--color-teal); }
+.reviews-nav button:disabled { opacity: 0.4; cursor: default; }
+.reviews-nav svg { width: 20px; height: 20px; }
+
+/* A native scroller: swipe, trackpad and arrow keys all work. The padding
+   (offset by negative margins) keeps card shadows and the hover lift from
+   being clipped by the overflow. */
+.reviews-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 28px) / 3);
+  gap: 14px;
+  align-items: start;
+  margin: -12px -12px 0;
+  padding: 12px 12px 26px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 12px;
+  scrollbar-width: none;
+}
+.reviews-track::-webkit-scrollbar { display: none; }
+.reviews-track:focus-visible { outline: 2px solid var(--color-teal); outline-offset: -4px; border-radius: var(--radius-lg); }
+
+/* Fixed minimum height (fits the longest collapsed review), so loading and
+   loaded cards are the same size; only "Read more" makes one taller. */
+.review {
+  display: flex;
+  flex-direction: column;
+  min-height: 322px;
+  padding: 22px 22px 20px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, #f8fbfe 0%, #f2f6fc 100%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: var(--shadow-md);
+  scroll-snap-align: start;
+  transition: box-shadow 0.35s ease;
+}
+.review:hover { box-shadow: var(--shadow-lg); }
+
+.review-head { display: flex; align-items: center; gap: 12px; }
+.review-avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--grad-step);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+}
+.review-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.review-meta { display: grid; min-width: 0; line-height: 1.35; }
+.review-author {
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-ink);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+a.review-author:hover { color: var(--color-teal); }
+.review-time { font-size: 12.5px; color: var(--color-muted); }
+.review .stars { width: 80px; height: 16px; margin-top: 14px; }
+.review .stars svg { width: 80px; height: 16px; }
+
+.review-text {
+  display: -webkit-box;
+  margin-top: 10px;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-ink-2);
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
+}
+.review-text.is-open { display: block; overflow: visible; -webkit-line-clamp: unset; line-clamp: none; }
+.review-toggle {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-teal);
+  cursor: pointer;
+}
+.review-toggle:hover { text-decoration: underline; text-underline-offset: 2px; }
+.review-translated { margin-top: 8px; font-size: 12px; color: var(--color-muted); }
+.review-translated .review-toggle { margin-top: 0; font-size: 12px; }
+.review-link {
+  margin-top: auto;
+  padding-top: 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-teal);
+}
+.review-link:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+/* Loading placeholders. */
+.review--skeleton { gap: 14px; }
+.skeleton-avatar,
+.skeleton-line {
+  display: block;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(20, 50, 80, 0.06) 0%, rgba(20, 50, 80, 0.12) 50%, rgba(20, 50, 80, 0.06) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+.skeleton-avatar { width: 40px; height: 40px; border-radius: 50%; }
+.skeleton-line { width: 100%; height: 12px; }
+.skeleton-line--short { width: 60%; }
+.reviews-summary .skeleton-line { width: 240px; max-width: 100%; height: 16px; }
+@keyframes shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+
+.reviews-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  margin-top: 2px;
+}
+.reviews-note { font-size: 12.5px; color: var(--color-muted); }
+.reviews-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.reviews-actions.is-pending { visibility: hidden; }
+
+/* Google's text attribution rules: Roboto (or a sans-serif fallback), weight
+   400, 12–16px, black #1F1F1F, grey #5E5E5E or white at 4.5:1 contrast. */
+.gmaps-attribution {
+  font-family: Roboto, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: normal;
+  color: #5e5e5e;
+  white-space: nowrap;
+}
+
+:root[data-theme="dark"] .review {
+  background: linear-gradient(180deg, #1b2732 0%, #16212c 100%);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+:root[data-theme="dark"] .stars-empty { color: rgba(255, 255, 255, 0.16); }
+:root[data-theme="dark"] .gmaps-attribution { color: #fff; }
+:root[data-theme="dark"] .skeleton-avatar,
+:root[data-theme="dark"] .skeleton-line {
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 100%);
+}
+
+@media (max-width: 1020px) {
+  .reviews-track { grid-auto-columns: calc((100% - 14px) / 2); }
+}
+@media (max-width: 640px) {
+  .reviews-track { grid-auto-columns: 86%; gap: 10px; }
+  .reviews-nav { display: none; }
+  .review { padding: 20px 18px 18px; }
 }
 
 /* Sections focused after keyboard navigation don't need a focus ring. */

@@ -2,6 +2,7 @@ import { telHref } from "@/lib/home-content";
 import type { SettingsDTO } from "@/lib/types";
 import { BookingCard } from "./BookingCard";
 import { BuildingIcon, CalendarIcon, ClockIcon, PinIcon } from "./icons";
+import { OpeningHours } from "./OpeningHours";
 
 const HEADLINE = "Comprehensive, human-centered care – under one roof";
 
@@ -61,7 +62,7 @@ export function Hero({ settings, specialistCount }: { settings: SettingsDTO; spe
             <span className="highlight-icon" aria-hidden="true">
               <ClockIcon />
             </span>
-            {settings.openingHours ?? "[Opening hours]"}
+            {settings.openingHours ? <OpeningHours value={settings.openingHours} /> : "[Opening hours]"}
           </li>
           <li className="highlight" style={at(3)}>
             <span className="highlight-icon" aria-hidden="true">

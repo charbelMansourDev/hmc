@@ -80,6 +80,9 @@ export function toSettingsDTO(doc: SiteSettingsDoc): SettingsDTO {
     address: doc.address ?? null,
     openingHours: doc.openingHours ?? null,
     mapQuery: doc.mapQuery,
+    bookingChannel: doc.bookingChannel ?? "whatsapp",
+    whatsapp: doc.whatsapp ?? null,
+    googlePlaceIds: [...(doc.googlePlaceIds ?? [])],
     updatedAt: iso(doc.updatedAt),
   };
 }

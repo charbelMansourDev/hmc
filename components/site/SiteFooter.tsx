@@ -23,11 +23,13 @@ export function SiteFooter({ nav, settings }: { nav: NavLink[]; settings: Settin
           </ul>
           <address className="footer-contact">
             <a href={telHref(settings.phone)}>{settings.phone}</a>
-            {settings.email ? <a href={`mailto:${settings.email}`}>{settings.email}</a> : <span>[Email]</span>}
             <span>{settings.address ?? "[Address]"}</span>
           </address>
         </motion.div>
-        <p className="copyright">© {new Date().getFullYear()} Hajj Medical Center. All rights reserved.</p>
+        <div className="footer-bottom">
+          <p className="copyright">© {new Date().getFullYear()} Hajj Medical Center. All rights reserved.</p>
+          <p className="credit">Developed by Runtime Collective</p>
+        </div>
       </div>
     </footer>
   );

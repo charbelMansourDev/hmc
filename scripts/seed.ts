@@ -20,6 +20,7 @@ import { Meta } from "../models/Meta";
 import { RateLimit } from "../models/RateLimit";
 import { Service } from "../models/Service";
 import { SETTINGS_SINGLETON, SiteSettings } from "../models/SiteSettings";
+import { settingsSchema } from "../lib/schemas";
 import { SEED_VERSION, seedClinics, seedDoctors, seedServices, seedSettings } from "./seed-data";
 
 const args = new Set(process.argv.slice(2));
@@ -107,6 +108,10 @@ async function seedContent() {
   );
 
   // Singleton: $setOnInsert only, so existing CMS values are never overwritten.
+  const settingsCheck = settingsSchema.safeParse(seedSettings);
+  if (!settingsCheck.success) fail(`settings are invalid: ${settingsCheck.error.message}`);
+  const settingsError = new SiteSettings({ singleton: SETTINGS_SINGLETON, ...seedSettings }).validateSync();
+  if (settingsError) fail(`settings are invalid: ${settingsError.message}`);
   const settings = await SiteSettings.updateOne(
     { singleton: SETTINGS_SINGLETON },
     { $setOnInsert: { singleton: SETTINGS_SINGLETON, ...seedSettings } },

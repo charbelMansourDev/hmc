@@ -1,7 +1,15 @@
 // Zod schemas shared by route handlers (authoritative) and admin forms (hints).
 // Every schema is .strict(): unknown keys are rejected with a 400.
 import { z } from "zod";
-import { ACCENTS, APPOINTMENT_STATUSES, CATEGORIES, SERVICE_DISPLAYS } from "./categories";
+import {
+  ACCENTS,
+  APPOINTMENT_STATUSES,
+  BOOKING_CHANNELS,
+  CATEGORIES,
+  MAX_GOOGLE_PLACES,
+  SERVICE_DISPLAYS,
+} from "./categories";
+import { isValidPhone, whatsappDigits } from "./phone";
 
 const text = (min: number, max: number) => z.string().trim().min(min).max(max);
 const optionalText = (max: number) =>
@@ -17,15 +25,7 @@ export const objectIdString = z.string().regex(/^[a-f\d]{24}$/i, "Invalid id");
 const sortOrder = z.coerce.number().int().min(0).max(9999);
 
 // Phone numbers: digits with optional +, spaces, dashes, dots and parentheses; 7–15 digits.
-export const phoneSchema = z
-  .string()
-  .trim()
-  .max(24)
-  .regex(/^\+?[\d\s().-]+$/, "Enter a valid phone number")
-  .refine((v) => {
-    const digits = v.replace(/\D/g, "").length;
-    return digits >= 7 && digits <= 15;
-  }, "Enter a valid phone number");
+export const phoneSchema = z.string().trim().max(24).refine(isValidPhone, "Enter a valid phone number");
 
 // ---------------------------------------------------------------- services
 export const serviceBase = z
@@ -84,6 +84,8 @@ export type DoctorCreateInput = z.infer<typeof doctorCreateSchema>;
 export type DoctorUpdateInput = z.infer<typeof doctorUpdateSchema>;
 
 // ---------------------------------------------------------------- settings
+const WHATSAPP_FORMAT = "Use the international format with the country code, e.g. +961 4 520 065.";
+
 export const settingsBase = z
   .object({
     phone: phoneSchema,
@@ -98,10 +100,30 @@ export const settingsBase = z
     address: optionalText(160),
     openingHours: optionalText(80),
     mapQuery: text(2, 120),
+    bookingChannel: z.enum(BOOKING_CHANNELS),
+    whatsapp: z
+      .string()
+      .trim()
+      .max(24)
+      .refine((v) => v === "" || whatsappDigits(v) !== null, WHATSAPP_FORMAT)
+      .nullish()
+      .transform((v) => (v ? v : null)),
+    googlePlaceIds: z
+      .array(z.string().trim().regex(/^[A-Za-z0-9_-]{10,256}$/, "That doesn't look like a Google Place ID."))
+      .max(MAX_GOOGLE_PLACES, `Add at most ${MAX_GOOGLE_PLACES} places.`)
+      .transform((ids) => [...new Set(ids)]),
   })
   .strict();
 
 export const settingsUpdateSchema = settingsBase.partial().strict();
+
+/** The whole settings document, checked after a patch is merged (rule 8). */
+export const settingsSchema = settingsBase.superRefine((s, ctx) => {
+  // WhatsApp needs a country code; with no separate number the phone is used.
+  if (s.bookingChannel === "whatsapp" && whatsappDigits(s.whatsapp ?? s.phone) === null) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["whatsapp"], message: WHATSAPP_FORMAT });
+  }
+});
 export type SettingsInput = z.infer<typeof settingsBase>;
 export type SettingsUpdateInput = z.infer<typeof settingsUpdateSchema>;
 

@@ -13,8 +13,8 @@ import { useEffect, useRef, useState } from "react";
 
 type LngLat = { lng: number; lat: number };
 
-/** Naccache, Lebanon (OpenStreetMap), used when the location can't be resolved. */
-const DEFAULT_CENTER: LngLat = { lat: 33.9228, lng: 35.5971 };
+/** The clinic's pin on Google Maps, used when the location can't be resolved. */
+const DEFAULT_CENTER: LngLat = { lat: 33.9285959, lng: 35.5966253 };
 
 /** "33.9228, 35.5971" (latitude, longitude, as Google Maps shows them). */
 const COORDINATES = /^\s*(-?\d{1,2}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)\s*$/;

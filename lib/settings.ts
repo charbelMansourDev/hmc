@@ -3,15 +3,19 @@ import { SETTINGS_SINGLETON, SiteSettings, type SiteSettingsDoc } from "@/models
 import { connectDB } from "./db";
 import { toSettingsDTO } from "./dto";
 import { parseWith } from "./http";
-import { settingsBase, type SettingsInput, type SettingsUpdateInput } from "./schemas";
+import { settingsSchema, type SettingsInput, type SettingsUpdateInput } from "./schemas";
 import type { SettingsDTO } from "./types";
 
+// Keep in step with seedSettings in scripts/seed-data.ts.
 export const SETTINGS_DEFAULTS: SettingsInput = {
   phone: "+961 4 520 065",
   email: null,
-  address: null,
-  openingHours: null,
-  mapQuery: "Naccache, Lebanon",
+  address: "Ground floor, Naccache, Green Zone A, bldg, 71, Naqqache",
+  openingHours: "Mon–Fri, 8:30 AM – 6:00 PM · Sat & Sun closed",
+  mapQuery: "33.9285959, 35.5966253",
+  bookingChannel: "whatsapp",
+  whatsapp: null,
+  googlePlaceIds: ["ChIJF7o0ARI_HxURCkCkKINPVC8"],
 };
 
 function pickSettings(doc: SiteSettingsDoc): SettingsInput {
@@ -21,6 +25,9 @@ function pickSettings(doc: SiteSettingsDoc): SettingsInput {
     address: doc.address ?? null,
     openingHours: doc.openingHours ?? null,
     mapQuery: doc.mapQuery,
+    bookingChannel: doc.bookingChannel ?? SETTINGS_DEFAULTS.bookingChannel,
+    whatsapp: doc.whatsapp ?? null,
+    googlePlaceIds: [...(doc.googlePlaceIds ?? [])],
   };
 }
 
@@ -39,7 +46,7 @@ export async function getSettings(): Promise<SettingsDTO> {
 export async function updateSettings(patch: SettingsUpdateInput): Promise<SettingsDTO> {
   await connectDB();
   const current = await SiteSettings.findOne({ singleton: SETTINGS_SINGLETON }).lean();
-  const merged = parseWith(settingsBase, {
+  const merged = parseWith(settingsSchema, {
     ...SETTINGS_DEFAULTS,
     ...(current ? pickSettings(current) : {}),
     ...patch,

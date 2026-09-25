@@ -11,7 +11,7 @@ const LINKS = [
   { href: "/admin/services", label: "Services" },
   { href: "/admin/clinics", label: "Clinics" },
   { href: "/admin/team", label: "Team" },
-  { href: "/admin/settings", label: "Contact & hours" },
+  { href: "/admin/settings", label: "Settings" },
 ];
 
 export function AdminNav({ username, newCount }: { username: string | null; newCount: number }) {
