@@ -2,7 +2,6 @@
 @import "tailwindcss";
 @import "../theme.css";
 
-@source not "../../legacy";
 
 /* Dark mode is attribute-driven (data-theme on <html>), matching the public
    site. Most CMS colours are token utilities that flip via theme.css; this

@@ -1,4 +1,5 @@
-// Generated from legacy/index.html. This is the day-one content of the CMS.
+// Generated from the original static site (legacy/index.html, see git history).
+// This is the day-one content of the CMS.
 // Used by `npm run seed`; after the first run the CMS owns all of it.
 import type { Accent, Category, ServiceDisplay } from "../lib/categories";
 
