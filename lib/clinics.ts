@@ -8,7 +8,7 @@ import { bySortOrder } from "./home-content";
 import { assertObjectId, badRequest, notFound } from "./http";
 import type { ClinicCreateInput, ClinicUpdateInput } from "./schemas";
 import { uniqueSlug } from "./slug";
-import { deleteImage, saveImage } from "./storage";
+import { deleteImage, plainImage, saveImage } from "./storage";
 import type { ClinicDTO } from "./types";
 import type { UploadedImage } from "./upload";
 
@@ -69,7 +69,7 @@ export async function updateClinic(
   if (!doc) throw notFound("Clinic");
   if (patch.serviceId !== undefined) await assertBookableService(patch.serviceId);
 
-  const previousImage = { ...doc.image };
+  const previousImage = plainImage(doc.image);
   const alt = patch.imageAlt ?? doc.image.alt;
   const stored = image ? await saveImage(image.bytes, image.ext, alt) : null;
 
@@ -78,7 +78,7 @@ export async function updateClinic(
   if (patch.description !== undefined) doc.description = patch.description;
   if (patch.sortOrder !== undefined) doc.sortOrder = patch.sortOrder;
   if (patch.serviceId !== undefined) doc.service = new Types.ObjectId(patch.serviceId);
-  doc.image = stored ?? { ...doc.image, alt };
+  doc.image = stored ?? { ...plainImage(doc.image)!, alt };
 
   try {
     await doc.save();

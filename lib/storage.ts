@@ -50,6 +50,16 @@ export async function saveImage(bytes: Uint8Array, ext: ImageExt, alt: string): 
   return { url: `/api/media/${name}`, alt, key: name, storage: "local" };
 }
 
+/**
+ * A plain copy of an image sub-document. Never spread a Mongoose sub-document
+ * (`{ ...doc.image }`): that copies Mongoose's internals, not url/key/storage,
+ * so the copy can't be deleted or re-saved correctly.
+ */
+export function plainImage(img: ImageRef | null | undefined): ImageRef | null {
+  if (!img) return null;
+  return { url: img.url, alt: img.alt, key: img.key ?? null, storage: img.storage };
+}
+
 /** Deletes a stored image. External (seeded) images are never touched. Never throws. */
 export async function deleteImage(ref: ImageRef | null | undefined): Promise<void> {
   if (!ref) return;

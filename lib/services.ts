@@ -9,7 +9,7 @@ import { bySortOrder } from "./home-content";
 import { assertObjectId, badRequest, conflict, notFound, type FieldErrors } from "./http";
 import type { ServiceCreateInput, ServiceUpdateInput } from "./schemas";
 import { uniqueSlug } from "./slug";
-import { deleteImage, saveImage } from "./storage";
+import { deleteImage, plainImage, saveImage } from "./storage";
 import type { ServiceDTO } from "./types";
 import type { UploadedImage } from "./upload";
 
@@ -121,7 +121,7 @@ export async function updateService(
   };
   await validateService(merged, id);
 
-  const previousImage = doc.image ? { ...doc.image } : null;
+  const previousImage = plainImage(doc.image);
   const alt = patch.imageAlt ?? doc.image.alt;
   const stored = image ? await saveImage(image.bytes, image.ext, alt) : null;
 
@@ -134,7 +134,7 @@ export async function updateService(
   doc.chip = merged.chip;
   doc.tags = merged.display === "feature" ? merged.tags : [];
   doc.bookAs = merged.bookAsId ? new Types.ObjectId(merged.bookAsId) : null;
-  doc.image = stored ?? { ...doc.image, alt };
+  doc.image = stored ?? { ...plainImage(doc.image)!, alt };
 
   try {
     await doc.save();

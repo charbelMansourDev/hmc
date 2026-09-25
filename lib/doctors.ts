@@ -7,7 +7,7 @@ import { bySortOrder } from "./home-content";
 import { assertObjectId, notFound } from "./http";
 import type { DoctorCreateInput, DoctorUpdateInput } from "./schemas";
 import { uniqueSlug } from "./slug";
-import { deleteImage, saveImage } from "./storage";
+import { deleteImage, plainImage, saveImage } from "./storage";
 import type { DoctorDTO } from "./types";
 import type { UploadedImage } from "./upload";
 
@@ -56,7 +56,7 @@ export async function updateDoctor(
   const doc = await Doctor.findById(id);
   if (!doc) throw notFound("Team member");
 
-  const previousPhoto = doc.photo ? { ...doc.photo } : null;
+  const previousPhoto = plainImage(doc.photo);
   const name = patch.name ?? doc.name;
   const alt = patch.photoAlt ?? doc.photo?.alt ?? `Photo of ${name}`;
   const stored = photo ? await saveImage(photo.bytes, photo.ext, alt) : null;
@@ -68,7 +68,7 @@ export async function updateDoctor(
   if (patch.sortOrder !== undefined) doc.sortOrder = patch.sortOrder;
   if (stored) doc.photo = stored;
   else if (patch.removePhoto) doc.photo = null;
-  else if (doc.photo) doc.photo = { ...doc.photo, alt };
+  else if (doc.photo) doc.photo = { ...plainImage(doc.photo)!, alt };
 
   try {
     await doc.save();
