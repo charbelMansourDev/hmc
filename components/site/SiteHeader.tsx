@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { NavLink } from "@/lib/types";
-import { BrandMark } from "./icons";
+import { HmcLogoCompact } from "./HmcLogo";
 
 const PILL_SPRING = { type: "spring", stiffness: 380, damping: 32 } as const;
 
@@ -66,10 +66,7 @@ export function SiteHeader({ nav }: { nav: NavLink[] }) {
       <div className="container">
         <nav ref={navRef} className={open ? "nav nav-open" : "nav"} aria-label="Main">
           <a className="brand" href="#top" aria-label="Hajj Medical Center home">
-            <span className="brand-mark" aria-hidden="true">
-              <BrandMark />
-            </span>
-            Hajj Medical Center
+            <HmcLogoCompact id="header-logo" />
           </a>
 
           <ul className="nav-links" id="nav-links">

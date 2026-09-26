@@ -150,24 +150,17 @@ main, .site-header, .site-footer { position: relative; z-index: 1; }
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  font-family: var(--font-serif);
-  font-weight: 600;
-  font-size: 19px;
-  letter-spacing: -0.01em;
-  color: var(--color-ink-2);
+  flex: none;
 }
+.brand .hmc-logo { width: auto; height: 50px; }
 
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
-  background: var(--grad-logo);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 6px 14px -6px rgba(47, 134, 230, 0.7);
-}
-.brand-mark svg { width: 20px; height: 20px; }
+/* Clinic logo (components/site/HmcLogo.tsx): the theme tokens colour the text,
+   so it follows dark/light; the icons keep the brand gradient. */
+.hmc-logo { display: block; overflow: visible; }
+.hmc-logo text { font-family: var(--font-sans); }
+.hmc-ink { fill: var(--color-ink); }
+.hmc-ink-2 { fill: var(--color-ink-2); }
+.hmc-accent { fill: var(--color-teal); }
 
 .nav-links {
   display: flex;
@@ -794,8 +787,10 @@ textarea.input { height: auto; min-height: 48px; padding: 13px 16px; resize: ver
   border: 1px solid rgba(255, 255, 255, 0.95);
   box-shadow: var(--shadow-md);
 }
-.footer-brand h2 { font-size: 21px; }
-.footer-brand p { margin-top: 8px; max-width: 34ch; font-size: 13px; color: var(--color-muted); }
+/* The full logo: kept at least 260px wide so its small lines stay legible. */
+.footer-brand h2 { width: 270px; max-width: 100%; }
+.footer-brand .hmc-logo { width: 100%; height: auto; }
+.footer-brand p { margin-top: 12px; max-width: 34ch; font-size: 13px; color: var(--color-muted); }
 
 .footer-links {
   display: flex;
@@ -919,9 +914,7 @@ textarea.input { height: auto; min-height: 48px; padding: 13px 16px; resize: ver
   :root { --nav-h: 60px; }
   .site-header { padding-top: 10px; }
   .nav { padding: 0 8px 0 12px; border-radius: 16px; }
-  .brand { font-size: 17px; gap: 10px; }
-  .brand-mark { width: 32px; height: 32px; border-radius: 9px; }
-  .brand-mark svg { width: 17px; height: 17px; }
+  .brand .hmc-logo { height: 42px; }
 
   .hero { padding-top: 28px; }
   .hero-copy { padding-top: 0; }

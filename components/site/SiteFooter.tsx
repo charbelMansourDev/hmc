@@ -1,6 +1,7 @@
 import * as motion from "motion/react-client";
 import { telHref } from "@/lib/home-content";
 import type { NavLink, SettingsDTO } from "@/lib/types";
+import { HmcLogo } from "./HmcLogo";
 import { fadeUp, VIEWPORT } from "./motion/variants";
 
 export function SiteFooter({ nav, settings }: { nav: NavLink[]; settings: SettingsDTO }) {
@@ -9,7 +10,9 @@ export function SiteFooter({ nav, settings }: { nav: NavLink[]; settings: Settin
       <div className="container">
         <motion.div className="footer-card" initial="hidden" whileInView="show" viewport={VIEWPORT} variants={fadeUp}>
           <div className="footer-brand">
-            <h2>Hajj Medical Center</h2>
+            <h2>
+              <HmcLogo id="footer-logo" />
+            </h2>
             <p>Comprehensive, human-centered care in Naccache.</p>
           </div>
           <ul className="footer-links">

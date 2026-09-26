@@ -9,14 +9,6 @@ const stroke = {
   strokeLinejoin: "round" as const,
 };
 
-export function BrandMark() {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round">
-      <path d="M6 4.5v11M14 4.5v11M6 10h8" />
-    </svg>
-  );
-}
-
 export function BuildingIcon() {
   return (
     <svg {...stroke}>
